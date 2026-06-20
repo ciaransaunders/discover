@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F82E5AD9FA6D31E3F8C05F74 /* html_with_feed_link.html in Resources */ = {isa = PBXBuildFile; fileRef = C4CC993357E9442EA3F51347 /* html_with_feed_link.html */; };
+		E83CDE07EBE3E2F0F40D99C9 /* NewArticleNotifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166457AFD23123A4592B4D7D /* NewArticleNotifierTests.swift */; };
+		7693858B429138F0E371C5E7 /* FeedSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F39EA846C45BBA739A6CCC /* FeedSearchTests.swift */; };
+		FE2E9666BCB5A7E6DD5A5E67 /* ArticleSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B657739D844D45B9398134 /* ArticleSearchTests.swift */; };
+		FE1F1D58CE50B6A7C2211D09 /* RefreshSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A262520A7FFD7617406F9DB3 /* RefreshSchedulerTests.swift */; };
+		5AA093D4C81EE2554AC8EAEF /* ArticleUpsertServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861A9962AFBF2216705B6FF1 /* ArticleUpsertServiceTests.swift */; };
+		14BBC65BE9BB0F4E2E3A5A85 /* FeedDiscoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 770C5B61E23A2CC4A51F045E /* FeedDiscoveryTests.swift */; };
+		AF41FCD8BC20CE67769C00D4 /* ArticleSearchScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67C216942C11051FBB54EC7F /* ArticleSearchScope.swift */; };
+		E3706DAC72A862E1405DE8FB /* RefreshScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E952D67CD9742F73DD7B84 /* RefreshScheduler.swift */; };
+		945AB7583AA269AC0C2101AE /* DefaultFeedsSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7180C27773F804A33E15D441 /* DefaultFeedsSeeder.swift */; };
+		4EE0673EF33E74DD937E99FE /* NewArticleNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69D2EA597DBD5EF61A39BDB /* NewArticleNotifier.swift */; };
+		AA8183B7D182A981C0E36FE4 /* FeedDiscoveryActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B229CAF8018943254B558556 /* FeedDiscoveryActor.swift */; };
+		ED5E2F2007F32EFC511C8BC4 /* ArticleUpsertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15EE53B3DA006DE760BFE24F /* ArticleUpsertService.swift */; };
 		0BCE499B6A46C3B14F437151 /* ImageURLUpgraderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65AE121C31DF8EA01464F6A /* ImageURLUpgraderTests.swift */; };
 		40E1A3A1B4E5F0F3A8435FF1 /* ImageURLUpgrader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F814F0E20C3EC2BDDB08536 /* ImageURLUpgrader.swift */; };
 		C03EFD5E142ABA24C7FDCD76 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F84F104E21CB48B1AEEB0C /* CachedAsyncImage.swift */; };
@@ -63,6 +76,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C4CC993357E9442EA3F51347 /* html_with_feed_link.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = html_with_feed_link.html; path = DiscoverTests/Fixtures/html_with_feed_link.html; sourceTree = SOURCE_ROOT; };
+		166457AFD23123A4592B4D7D /* NewArticleNotifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NewArticleNotifierTests.swift; path = DiscoverTests/NewArticleNotifierTests.swift; sourceTree = SOURCE_ROOT; };
+		67F39EA846C45BBA739A6CCC /* FeedSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FeedSearchTests.swift; path = DiscoverTests/FeedSearchTests.swift; sourceTree = SOURCE_ROOT; };
+		C7B657739D844D45B9398134 /* ArticleSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleSearchTests.swift; path = DiscoverTests/ArticleSearchTests.swift; sourceTree = SOURCE_ROOT; };
+		A262520A7FFD7617406F9DB3 /* RefreshSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RefreshSchedulerTests.swift; path = DiscoverTests/RefreshSchedulerTests.swift; sourceTree = SOURCE_ROOT; };
+		861A9962AFBF2216705B6FF1 /* ArticleUpsertServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleUpsertServiceTests.swift; path = DiscoverTests/ArticleUpsertServiceTests.swift; sourceTree = SOURCE_ROOT; };
+		770C5B61E23A2CC4A51F045E /* FeedDiscoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FeedDiscoveryTests.swift; path = DiscoverTests/FeedDiscoveryTests.swift; sourceTree = SOURCE_ROOT; };
+		67C216942C11051FBB54EC7F /* ArticleSearchScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleSearchScope.swift; path = Discover/Features/ArticleList/ArticleSearchScope.swift; sourceTree = SOURCE_ROOT; };
+		E1E952D67CD9742F73DD7B84 /* RefreshScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RefreshScheduler.swift; path = Discover/Features/Refresh/RefreshScheduler.swift; sourceTree = SOURCE_ROOT; };
+		7180C27773F804A33E15D441 /* DefaultFeedsSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DefaultFeedsSeeder.swift; path = Discover/Core/Services/DefaultFeedsSeeder.swift; sourceTree = SOURCE_ROOT; };
+		B69D2EA597DBD5EF61A39BDB /* NewArticleNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NewArticleNotifier.swift; path = Discover/Core/Services/NewArticleNotifier.swift; sourceTree = SOURCE_ROOT; };
+		B229CAF8018943254B558556 /* FeedDiscoveryActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FeedDiscoveryActor.swift; path = Discover/Core/Services/FeedDiscoveryActor.swift; sourceTree = SOURCE_ROOT; };
+		15EE53B3DA006DE760BFE24F /* ArticleUpsertService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleUpsertService.swift; path = Discover/Core/Services/ArticleUpsertService.swift; sourceTree = SOURCE_ROOT; };
 		B65AE121C31DF8EA01464F6A /* ImageURLUpgraderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageURLUpgraderTests.swift; path = DiscoverTests/ImageURLUpgraderTests.swift; sourceTree = SOURCE_ROOT; };
 		9F814F0E20C3EC2BDDB08536 /* ImageURLUpgrader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageURLUpgrader.swift; path = Discover/Core/Utilities/ImageURLUpgrader.swift; sourceTree = SOURCE_ROOT; };
 		E1F84F104E21CB48B1AEEB0C /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CachedAsyncImage.swift; path = Discover/UI/Components/CachedAsyncImage.swift; sourceTree = SOURCE_ROOT; };
@@ -163,6 +189,19 @@
 				E1F84F104E21CB48B1AEEB0C /* CachedAsyncImage.swift */,
 				9F814F0E20C3EC2BDDB08536 /* ImageURLUpgrader.swift */,
 				B65AE121C31DF8EA01464F6A /* ImageURLUpgraderTests.swift */,
+				15EE53B3DA006DE760BFE24F /* ArticleUpsertService.swift */,
+				B229CAF8018943254B558556 /* FeedDiscoveryActor.swift */,
+				B69D2EA597DBD5EF61A39BDB /* NewArticleNotifier.swift */,
+				7180C27773F804A33E15D441 /* DefaultFeedsSeeder.swift */,
+				E1E952D67CD9742F73DD7B84 /* RefreshScheduler.swift */,
+				67C216942C11051FBB54EC7F /* ArticleSearchScope.swift */,
+				770C5B61E23A2CC4A51F045E /* FeedDiscoveryTests.swift */,
+				861A9962AFBF2216705B6FF1 /* ArticleUpsertServiceTests.swift */,
+				A262520A7FFD7617406F9DB3 /* RefreshSchedulerTests.swift */,
+				C7B657739D844D45B9398134 /* ArticleSearchTests.swift */,
+				67F39EA846C45BBA739A6CCC /* FeedSearchTests.swift */,
+				166457AFD23123A4592B4D7D /* NewArticleNotifierTests.swift */,
+				C4CC993357E9442EA3F51347 /* html_with_feed_link.html */,
 			);
 			sourceTree = "<group>";
 		};
@@ -444,6 +483,7 @@
 				AA0000010000000000000102 /* rss_sample.xml in Resources */,
 				AA0000010000000000000106 /* namespaces_sample.xml in Resources */,
 				AA0000010000000000000107 /* youtube_sample.xml in Resources */,
+				F82E5AD9FA6D31E3F8C05F74 /* html_with_feed_link.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,6 +529,12 @@
 				1AF22773CE9E2F49E1FA79FA /* ImageLoader.swift in Sources */,
 				C03EFD5E142ABA24C7FDCD76 /* CachedAsyncImage.swift in Sources */,
 				40E1A3A1B4E5F0F3A8435FF1 /* ImageURLUpgrader.swift in Sources */,
+				ED5E2F2007F32EFC511C8BC4 /* ArticleUpsertService.swift in Sources */,
+				AA8183B7D182A981C0E36FE4 /* FeedDiscoveryActor.swift in Sources */,
+				4EE0673EF33E74DD937E99FE /* NewArticleNotifier.swift in Sources */,
+				945AB7583AA269AC0C2101AE /* DefaultFeedsSeeder.swift in Sources */,
+				E3706DAC72A862E1405DE8FB /* RefreshScheduler.swift in Sources */,
+				AF41FCD8BC20CE67769C00D4 /* ArticleSearchScope.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +545,12 @@
 				AA000001000000000000002E /* DiscoverTests.swift in Sources */,
 				9B63F0A64275A777AF835E99 /* SidebarSelectionTests.swift in Sources */,
 				0BCE499B6A46C3B14F437151 /* ImageURLUpgraderTests.swift in Sources */,
+				14BBC65BE9BB0F4E2E3A5A85 /* FeedDiscoveryTests.swift in Sources */,
+				5AA093D4C81EE2554AC8EAEF /* ArticleUpsertServiceTests.swift in Sources */,
+				FE1F1D58CE50B6A7C2211D09 /* RefreshSchedulerTests.swift in Sources */,
+				FE2E9666BCB5A7E6DD5A5E67 /* ArticleSearchTests.swift in Sources */,
+				7693858B429138F0E371C5E7 /* FeedSearchTests.swift in Sources */,
+				E83CDE07EBE3E2F0F40D99C9 /* NewArticleNotifierTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

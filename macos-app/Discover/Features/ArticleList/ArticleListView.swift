@@ -15,22 +15,20 @@ struct ArticleListView: View {
     @Environment(\.modelContext) private var modelContext
 
     // MARK: - State
-    
-    @AppStorage("refreshIntervalMinutes") private var refreshInterval: Int = 30
+
+    @AppStorage("recentSearches") private var recentSearchesJSON: String = "[]"
 
     @State private var viewModel   = ArticleListViewModel()
     @State private var showFeedMgr = false
     @State private var searchText  = ""
+    /// Debounced copy of `searchText` (updated ~250 ms after the last keystroke).
+    @State private var committedSearch = ""
+    @State private var searchScope: ArticleSearchScope = .all
     @State private var setupErrorMessage: String?
 
     // MARK: - Data (dynamic @Query predicate from selectedCategory)
 
     @Query private var articles: [ArticleModel]
-
-    /// Total article count across ALL categories — used in .task to decide whether
-    /// a refresh is needed.  This prevents category-switching from triggering a
-    /// re-fetch just because the selected category has no locally-stored articles yet.
-    @Query private var allArticles: [ArticleModel]
 
     /// All categories — used to build the slug → hex colour lookup for card badges.
     @Query(sort: \CategoryModel.priority) private var allCategories: [CategoryModel]
@@ -63,15 +61,32 @@ struct ArticleListView: View {
         Dictionary(uniqueKeysWithValues: allCategories.map { ($0.slug, $0.colorHex) })
     }
 
-    /// Articles filtered by the current search query (in-memory, post-@Query).
+    /// Articles filtered by the debounced search query + scope (in-memory, post-@Query).
+    ///
+    /// Uses the pure `ArticleSearchMatcher` so behaviour is shared with the test suite. An empty
+    /// query under the `.all` scope short-circuits to the unfiltered list.
     private var displayedArticles: [ArticleModel] {
-        let trimmed = searchText.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return articles }
-        return articles.filter {
-            $0.title.localizedCaseInsensitiveContains(trimmed) ||
-            $0.snippet.localizedCaseInsensitiveContains(trimmed) ||
-            $0.source.localizedCaseInsensitiveContains(trimmed)
+        let trimmed = committedSearch.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty, searchScope == .all { return articles }
+        return articles.filter { article in
+            ArticleSearchMatcher.matches(
+                ArticleSearchSubject(
+                    title: article.title,
+                    snippet: article.snippet,
+                    source: article.source,
+                    category: article.category,
+                    isRead: article.isRead
+                ),
+                query: committedSearch,
+                scope: searchScope,
+                selectedCategory: selectedCategory
+            )
         }
+    }
+
+    /// Recent search terms decoded from `@AppStorage` JSON.
+    private var recentSearches: [String] {
+        RecentSearchesStore.decode(recentSearchesJSON)
     }
 
     // MARK: - Body
@@ -114,6 +129,21 @@ struct ArticleListView: View {
         // Extend content under navigation bar for Liquid Glass scroll-edge effect.
         .scrollContentBackground(.hidden)
         .searchable(text: $searchText, prompt: "Search articles…")
+        .searchScopes($searchScope) {
+            ForEach(ArticleSearchScope.allCases) { scope in
+                Text(scope.label).tag(scope)
+            }
+        }
+        .searchSuggestions {
+            if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                ForEach(recentSearches, id: \.self) { term in
+                    Text(term).searchCompletion(term)
+                }
+            }
+        }
+        .onSubmit(of: .search) {
+            recordRecentSearch(searchText)
+        }
         .navigationTitle(navTitle)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
@@ -156,35 +186,21 @@ struct ArticleListView: View {
                 }
             }
         }
-        // Seed defaults on first launch, then initial fetch + background auto-refresh.
-        // Seeding lives here (not in a parent .onAppear) to guarantee it completes
-        // before the first fetch — SwiftUI fires child .task before parent .onAppear.
-        // We check allArticles (store-wide), not articles (category-filtered), so that
-        // switching to an empty category doesn't trigger a redundant full re-fetch.
-        .task(id: refreshInterval) {
+        // Seed defaults (idempotent) so an empty category never shows up un-seeded. The
+        // app-lifetime background refresh loop + initial fetch are owned by `RefreshScheduler`
+        // in `ContentView` (cluster E2) — this view no longer runs its own refresh timer.
+        .task {
             do {
-                try seedDefaultsIfNeeded()
+                try DefaultFeedsSeeder.seedIfNeeded(context: modelContext)
             } catch {
                 setupErrorMessage = error.localizedDescription
-                return
             }
-
-            if allArticles.isEmpty {
-                await viewModel.refresh(context: modelContext)
-            }
-
-            // The .task(id: refreshInterval) restarts this loop whenever the interval changes.
-            while !Task.isCancelled {
-                if refreshInterval > 0 {
-                    try? await Task.sleep(for: .seconds(refreshInterval * 60))
-                    guard !Task.isCancelled else { break }
-                    await viewModel.refresh(context: modelContext)
-                } else {
-                    // Auto-refresh is disabled. We just wait indefinitely (the task will be cancelled
-                    // and restarted if the interval changes to > 0).
-                    try? await Task.sleep(for: .seconds(3600))
-                }
-            }
+        }
+        // Debounce the search field into a committed query that drives the in-memory filter.
+        .task(id: searchText) {
+            try? await Task.sleep(for: .milliseconds(250))
+            guard !Task.isCancelled else { return }
+            committedSearch = searchText
         }
         // ⌘R refresh notification
         .onReceive(NotificationCenter.default.publisher(for: .refreshFeeds)) { _ in
@@ -275,46 +291,12 @@ struct ArticleListView: View {
         }
     }
 
-    // MARK: - First-launch seed
+    // MARK: - Recent searches (cluster E3)
 
-    /// Inserts bundled default categories and feeds into SwiftData on first launch.
-    /// Idempotent: inserts missing rows and preserves user changes to existing ones.
-    private func seedDefaultsIfNeeded() throws {
-        let existingCategories = try modelContext.fetch(FetchDescriptor<CategoryModel>())
-        let existingFeeds = try modelContext.fetch(FetchDescriptor<FeedModel>())
-
-        let existingSlugs = Set(existingCategories.map(\.slug))
-        let existingUrls = Set(existingFeeds.map(\.url))
-
-        var didInsertAnything = false
-
-        for (index, data) in DefaultFeeds.categories.enumerated() {
-            guard !existingSlugs.contains(data.slug) else { continue }
-            let category = CategoryModel(
-                slug: data.slug,
-                label: data.label,
-                colorHex: data.color,
-                priority: index
-            )
-            modelContext.insert(category)
-            didInsertAnything = true
-        }
-
-        for data in DefaultFeeds.feeds {
-            guard !existingUrls.contains(data.url) else { continue }
-            let feed = FeedModel(
-                url: data.url,
-                name: data.name,
-                category: data.category,
-                useOgImage: data.useOgImage
-            )
-            modelContext.insert(feed)
-            didInsertAnything = true
-        }
-
-        if didInsertAnything {
-            try modelContext.save()
-        }
+    /// Promotes `term` to the recent-searches list (de-duplicated, bounded) and persists it.
+    private func recordRecentSearch(_ term: String) {
+        let updated = RecentSearchesStore.adding(term, to: recentSearches)
+        recentSearchesJSON = RecentSearchesStore.encode(updated)
     }
 
     // MARK: - Feed status

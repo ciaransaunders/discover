@@ -6,9 +6,40 @@ import SwiftData
 /// On iPhone, uses a `TabView` with category tabs for compact navigation.
 struct ContentView: View {
 
+    @Environment(\.modelContext) private var modelContext
+
     @State private var selectedCategory: String? = nil
 
+    /// App-lifetime background refresh scheduler (cluster E2). Owns the single long-lived refresh
+    /// loop, started from the top-level `.task` below — replaces the old view-scoped loop in
+    /// `ArticleListView`.
+    @State private var refreshScheduler = RefreshScheduler(viewModel: ArticleListViewModel())
+    @State private var setupErrorMessage: String?
+
     var body: some View {
+        content
+            // Single app-lifetime refresh loop, owned here (not in the article list).
+            // Seed defaults first so feeds exist before the scheduler's initial fetch.
+            .task {
+                do {
+                    try DefaultFeedsSeeder.seedIfNeeded(context: modelContext)
+                } catch {
+                    setupErrorMessage = error.localizedDescription
+                }
+                refreshScheduler.start(context: modelContext)
+            }
+            .alert("Setup failed", isPresented: Binding(
+                get: { setupErrorMessage != nil },
+                set: { if !$0 { setupErrorMessage = nil } }
+            )) {
+                Button("OK") { setupErrorMessage = nil }
+            } message: {
+                Text(setupErrorMessage ?? "")
+            }
+    }
+
+    @ViewBuilder
+    private var content: some View {
         #if os(macOS)
         NavigationSplitView {
             CategorySidebarView(selectedCategory: $selectedCategory)

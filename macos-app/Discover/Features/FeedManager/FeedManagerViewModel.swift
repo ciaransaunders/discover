@@ -18,6 +18,11 @@ final class FeedManagerViewModel {
   var errorMessage: String?
   var selectedTab = FeedManagerTab.feeds
 
+  /// `true` while an add-by-URL discovery request is in flight (drives the Add button spinner).
+  var isDiscovering = false
+  /// Search query applied (in-memory) to the feed list.
+  var feedSearchText = ""
+
   enum FeedManagerTab { case feeds, categories }
 
   // MARK: - Feed CRUD
@@ -49,6 +54,78 @@ final class FeedManagerViewModel {
       )
       context.insert(feed)
       try context.save()
+      clearFeedForm()
+    } catch {
+      errorMessage = error.localizedDescription
+    }
+  }
+
+  /// Add-by-URL with autodiscovery (cluster E1).
+  ///
+  /// Resolves the entered URL to a concrete feed via `FeedDiscoveryActor` (off-main network),
+  /// validates uniqueness, infers the display name from the feed `<title>`, stamps
+  /// `createdAt = .now`, inserts the `FeedModel`, then upserts any prefetched items through the
+  /// shared `ArticleUpsertService`. Errors are surfaced via `errorMessage`.
+  func discoverAndAddFeed(context: ModelContext) async {
+    guard !isDiscovering else { return }
+    let entered = newFeedURL.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !entered.isEmpty else {
+      errorMessage = "Please enter a feed or website URL."
+      return
+    }
+
+    isDiscovering = true
+    defer { isDiscovering = false }
+
+    let result: FeedDiscoveryResult
+    do {
+      result = try await FeedDiscoveryActor.shared.discover(from: entered)
+    } catch {
+      errorMessage = error.localizedDescription
+      return
+    }
+
+    do {
+      // Reject duplicates against the resolved URL.
+      let resolvedURL = result.feedUrl
+      let existingFeeds = try context.fetch(FetchDescriptor<FeedModel>())
+      if existingFeeds.contains(where: { $0.url == resolvedURL }) {
+        errorMessage = "This feed has already been added."
+        return
+      }
+
+      let category = newFeedCategory.trimmingCharacters(in: .whitespacesAndNewlines)
+      let resolvedCategory = category.isEmpty ? "general" : category
+      try ensureCategoryExistsIfNeeded(slug: resolvedCategory, context: context)
+
+      // Prefer a user-supplied name, else the feed's <title>, else a host-derived label.
+      let typedName = newFeedName.trimmingCharacters(in: .whitespacesAndNewlines)
+      let inferredName =
+        typedName.isEmpty
+        ? (result.feedTitle?.trimmingCharacters(in: .whitespacesAndNewlines)).flatMap { $0.isEmpty ? nil : $0 }
+          ?? URLNormaliser.sourceName(from: resolvedURL)
+        : typedName
+
+      let feed = FeedModel(
+        url: resolvedURL,
+        name: inferredName,
+        category: resolvedCategory,
+        createdAt: .now
+      )
+      context.insert(feed)
+      try context.save()
+
+      // Persist prefetched items so the new feed isn't empty until the next refresh.
+      // Stamp feed metadata so source/category match the inserted FeedModel.
+      let stampedItems = result.items.map { item -> ParsedItem in
+        var copy = item
+        copy.feedUrl = resolvedURL
+        copy.category = resolvedCategory
+        copy.feedName = inferredName
+        return copy
+      }
+      try ArticleUpsertService.upsert(stampedItems, into: context)
+
       clearFeedForm()
     } catch {
       errorMessage = error.localizedDescription

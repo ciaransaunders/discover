@@ -11,6 +11,7 @@ struct PreferencesView: View {
   @AppStorage("maxArticleAgeDays") private var maxArticleAge: Int = 7
   @AppStorage("openLinksInBackground") private var openInBackground = false
   @AppStorage("markReadOnOpen") private var markReadOnOpen = true
+  @AppStorage("notifyOnNewArticles") private var notifyOnNewArticles = false
 
   var body: some View {
     NavigationStack {
@@ -32,6 +33,13 @@ struct PreferencesView: View {
             Text("7 days").tag(7)
             Text("14 days").tag(14)
             Text("30 days").tag(30)
+          }
+
+          Toggle("Notify me about new articles", isOn: $notifyOnNewArticles)
+          if notifyOnNewArticles {
+            Text("Only shown if you have already allowed notifications for Discover in System Settings.")
+              .font(.caption)
+              .foregroundStyle(.secondary)
           }
         }
 

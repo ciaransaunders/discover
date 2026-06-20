@@ -76,6 +76,21 @@ final class RSSParser: NSObject, XMLParserDelegate, @unchecked Sendable {
         parseWithDiagnostics(data: data, feedUrl: feedUrl, feedName: feedName, category: category).items
     }
 
+    /// Parse `data` and return only the feed's `<title>` (channel/feed level).
+    ///
+    /// Used by add-by-URL autodiscovery to infer a display name. Returns `nil` when the feed
+    /// has no title element.
+    static func feedTitle(data: Data) -> String? {
+        let parser = RSSParser()
+        let xml = XMLParser(data: data)
+        xml.delegate = parser
+        xml.shouldProcessNamespaces       = true
+        xml.shouldReportNamespacePrefixes = true
+        _ = xml.parse()
+        let trimmed = parser.feedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     /// Parse `data` and return items along with any parser error.
     ///
     /// Use this when you want to distinguish "empty feed" from "parse failed".
@@ -84,7 +99,7 @@ final class RSSParser: NSObject, XMLParserDelegate, @unchecked Sendable {
         feedUrl: String,
         feedName: String = "",
         category: String = ""
-    ) -> (items: [ParsedItem], parserError: (any Error)?) {
+    ) -> (items: [ParsedItem], parserError: (any Error)?, feedTitle: String?) {
         let parser = RSSParser()
         let xml = XMLParser(data: data)
         xml.delegate = parser
@@ -107,7 +122,8 @@ final class RSSParser: NSObject, XMLParserDelegate, @unchecked Sendable {
         } else {
             Logger.parsing.info("Parsed \(items.count) items from \(feedUrl, privacy: .public)")
         }
-        return (items: items, parserError: ok ? nil : err)
+        let title = parser.feedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        return (items: items, parserError: ok ? nil : err, feedTitle: title.isEmpty ? nil : title)
     }
 
     // MARK: - XMLParserDelegate: element start

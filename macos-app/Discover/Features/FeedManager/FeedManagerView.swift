@@ -63,10 +63,11 @@ struct FeedManagerView: View {
 
   private var feedsTab: some View {
     List {
-      // Add-feed form
+      // Add-feed form (with autodiscovery — accepts a feed URL or a website URL).
       Section("Add Feed") {
-        TextField("RSS feed URL", text: $viewModel.newFeedURL)
+        TextField("Feed or website URL", text: $viewModel.newFeedURL)
           .textFieldStyle(.plain)
+          .onSubmit { Task { await viewModel.discoverAndAddFeed(context: modelContext) } }
         TextField("Name (optional)", text: $viewModel.newFeedName)
           .textFieldStyle(.plain)
         // Category picker from existing categories
@@ -76,15 +77,50 @@ struct FeedManagerView: View {
             Text(cat.label).tag(cat.slug)
           }
         }
-        Button("Add Feed") {
-          viewModel.addFeed(context: modelContext)
+        Button {
+          Task { await viewModel.discoverAndAddFeed(context: modelContext) }
+        } label: {
+          if viewModel.isDiscovering {
+            HStack(spacing: 6) {
+              ProgressView().controlSize(.small)
+              Text("Finding feed…")
+            }
+          } else {
+            Text("Add Feed")
+          }
         }
         .buttonStyle(.borderedProminent)
-        .disabled(viewModel.newFeedURL.isEmpty)
+        .disabled(viewModel.newFeedURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isDiscovering)
+        Text("Paste an RSS/Atom URL, or a site's homepage — Discover will try to find its feed.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
       }
 
-      // Existing feeds grouped by category
-      let grouped = Dictionary(grouping: feeds, by: { $0.category })
+      // Search existing feeds (in-memory; cluster E3).
+      Section {
+        HStack(spacing: 6) {
+          Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+          TextField("Search feeds", text: $viewModel.feedSearchText)
+            .textFieldStyle(.plain)
+          if !viewModel.feedSearchText.isEmpty {
+            Button {
+              viewModel.feedSearchText = ""
+            } label: {
+              Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+          }
+        }
+      }
+
+      // Existing feeds grouped by category (search-filtered).
+      let visibleFeeds = feeds.filter { feed in
+        FeedSearchMatcher.matches(
+          FeedSearchSubject(name: feed.name, url: feed.url, category: feed.category),
+          query: viewModel.feedSearchText
+        )
+      }
+      let grouped = Dictionary(grouping: visibleFeeds, by: { $0.category })
       let priorityBySlug = Dictionary(uniqueKeysWithValues: categories.map { ($0.slug, $0.priority) })
       let labelBySlug = Dictionary(uniqueKeysWithValues: categories.map { ($0.slug, $0.label) })
       let sortedSlugs = grouped.keys.sorted { lhs, rhs in
