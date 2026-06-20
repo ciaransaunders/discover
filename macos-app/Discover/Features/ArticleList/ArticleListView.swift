@@ -10,15 +10,26 @@ struct ArticleListView: View {
 
     let selection: SidebarSelection
 
+    /// Cluster B2 — write-back binding so category cycling (Tab / `[` / `]`) can change the parent's
+    /// selection. The value-typed `selection` above still drives the `@Query` built in `init`.
+    @Binding var selectionBinding: SidebarSelection
+
     // MARK: - Environment
 
     @Environment(\.modelContext) private var modelContext
+
+    /// Cluster B1 — shared selected-article state (owned by `ContentView`, injected via `.environment`).
+    @Environment(NavigationStateModel.self) private var navState
 
     // MARK: - State
 
     @AppStorage("recentSearches") private var recentSearchesJSON: String = "[]"
     /// Cluster C2 — hide already-read articles from the list (view-layer only, no schema).
     @AppStorage("hideReadArticles") private var hideReadArticles = false
+    /// Cluster B2 — open path for space/return must match the card tap (Reader vs browser).
+    @AppStorage("tapOpensReader") private var tapOpensReader = true
+    @AppStorage("markReadOnOpen") private var markReadOnOpen = true
+    @AppStorage("openLinksInBackground") private var openInBackground = false
 
     @State private var viewModel   = ArticleListViewModel()
     @State private var showFeedMgr = false
@@ -27,6 +38,14 @@ struct ArticleListView: View {
     @State private var committedSearch = ""
     @State private var searchScope: ArticleSearchScope = .all
     @State private var setupErrorMessage: String?
+
+    // MARK: - Keyboard navigation (cluster B)
+
+    /// Focus target for the article scroll region. Single-key nav is handled **only** while this is
+    /// focused and the `.searchable` field is not, so text input keeps working.
+    @FocusState private var listFocused: Bool
+    /// Article presented in the keyboard-driven Reader sheet (space/return when `tapOpensReader`).
+    @State private var keyboardReaderArticle: ArticleModel?
 
     // MARK: - Data (dynamic @Query predicate from the SidebarSelection)
 
@@ -50,8 +69,9 @@ struct ArticleListView: View {
 
     // MARK: - Init (dynamic @Query predicate per selection)
 
-    init(selection: SidebarSelection) {
+    init(selection: SidebarSelection, selectionBinding: Binding<SidebarSelection> = .constant(.all)) {
         self.selection = selection
+        self._selectionBinding = selectionBinding
         let sort = [SortDescriptor(\ArticleModel.publishedAt, order: .reverse)]
 
         switch selection {
@@ -140,43 +160,25 @@ struct ArticleListView: View {
         RecentSearchesStore.decode(recentSearchesJSON)
     }
 
+    // MARK: - Keyboard selection (cluster B)
+
+    /// The selection order for keyboard navigation — the same `displayedArticles` everything else
+    /// uses (single source of truth), reduced to stable ids.
+    private var orderedIDs: [String] {
+        displayedArticles.map(\.id)
+    }
+
+    /// Resolve the selected article by id against the current `displayedArticles` (so a purged /
+    /// filtered-out id never points at an off-screen article). `nil` when nothing is selected.
+    private var selectedArticle: ArticleModel? {
+        guard let id = navState.selectedArticleID else { return nil }
+        return displayedArticles.first { $0.id == id }
+    }
+
     // MARK: - Body
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 20) {
-                if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    feedStatusBanner
-                        .padding(.horizontal, 16)
-                }
-                if displayedArticles.isEmpty {
-                    emptyState
-                } else {
-                    // Hero card — first (most recent) article.
-                    let hero = displayedArticles[0]
-                    HeroCardView(
-                        article: hero,
-                        colorHex: categoryColorMap[hero.category] ?? "#6B7280"
-                    )
-                    .padding(.horizontal, 16)
-
-                    // Adaptive grid — the rest.
-                    if displayedArticles.count > 1 {
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(displayedArticles.dropFirst()) { article in
-                                ArticleCardView(
-                                    article: article,
-                                    colorHex: categoryColorMap[article.category] ?? "#6B7280"
-                                )
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                    }
-                }
-            }
-            .padding(.top, 16)
-            .padding(.bottom, 32)
-        }
+        articleScroll
         // Extend content under navigation bar for Liquid Glass scroll-edge effect.
         .scrollContentBackground(.hidden)
         .searchable(text: $searchText, prompt: "Search articles…")
@@ -276,6 +278,10 @@ struct ArticleListView: View {
         .sheet(isPresented: $showFeedMgr) {
             FeedManagerView()
         }
+        // Cluster B2 — keyboard-driven Reader (space/return when `tapOpensReader`), mirroring card tap.
+        .sheet(item: $keyboardReaderArticle) { article in
+            ReaderView(article: article, colorHex: categoryColorMap[article.category] ?? "#6B7280")
+        }
         // Error alert.
         .alert("Refresh failed", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
@@ -292,6 +298,76 @@ struct ArticleListView: View {
             Button("OK") { setupErrorMessage = nil }
         } message: {
             Text(setupErrorMessage ?? "")
+        }
+    }
+
+    // MARK: - Article scroll region (focusable, keyboard-navigable)
+
+    /// The scrollable hero + grid, wrapped so keyboard selection (cluster B) can scroll the selected
+    /// article into view and (on macOS) route single-key shortcuts. The region is the focus target;
+    /// nav keys are handled only while it is focused (and the search field is not).
+    private var articleScroll: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 20) {
+                    if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        feedStatusBanner
+                            .padding(.horizontal, 16)
+                    }
+                    if displayedArticles.isEmpty {
+                        emptyState
+                    } else {
+                        // Hero card — first (most recent) article.
+                        let hero = displayedArticles[0]
+                        HeroCardView(
+                            article: hero,
+                            colorHex: categoryColorMap[hero.category] ?? "#6B7280",
+                            isSelected: navState.selectedArticleID == hero.id
+                        )
+                        .id(hero.id)
+                        .padding(.horizontal, 16)
+
+                        // Adaptive grid — the rest.
+                        if displayedArticles.count > 1 {
+                            LazyVGrid(columns: columns, spacing: 16) {
+                                ForEach(displayedArticles.dropFirst()) { article in
+                                    ArticleCardView(
+                                        article: article,
+                                        colorHex: categoryColorMap[article.category] ?? "#6B7280",
+                                        isSelected: navState.selectedArticleID == article.id
+                                    )
+                                    .id(article.id)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                }
+                .padding(.top, 16)
+                .padding(.bottom, 32)
+            }
+            // Keep the selection resolvable: if the selected id has left `displayedArticles`
+            // (purged / filtered / searched away), reset to nil. Runs each time the list changes.
+            .onChange(of: orderedIDs) { _, ids in
+                navState.reconcile(orderedIDs: ids)
+            }
+            // Scroll the selected card into view as keyboard selection moves.
+            .onChange(of: navState.selectedArticleID) { _, id in
+                guard let id else { return }
+                withAnimation(.easeInOut(duration: 0.18)) {
+                    proxy.scrollTo(id, anchor: .center)
+                }
+            }
+            #if os(macOS)
+            // Make the scroll region the focus target and route NetNewsWire-style single keys.
+            // Keys we don't own (or anything with ⌘) return `.ignored` so text fields/buttons work.
+            .focusable()
+            .focused($listFocused)
+            .focusEffectDisabled()
+            .onKeyPress { press in
+                handleKeyPress(press)
+            }
+            #endif
         }
     }
 
@@ -352,6 +428,76 @@ struct ArticleListView: View {
             setupErrorMessage = error.localizedDescription
         }
     }
+
+    // MARK: - Keyboard routing (cluster B2)
+
+    #if os(macOS)
+    /// The single `.onKeyPress` router for the focusable list region.
+    ///
+    /// Maps the press through the pure `ArticleKeyCommands` mapper; unowned keys (and anything with
+    /// ⌘) return `.ignored` so menu shortcuts, default activation, and any focused control keep their
+    /// keys. We never claim a key while the keyboard Reader sheet is open.
+    private func handleKeyPress(_ press: KeyPress) -> KeyPress.Result {
+        guard keyboardReaderArticle == nil else { return .ignored }
+        guard let command = ArticleKeyCommands.command(for: press.key, modifiers: press.modifiers) else {
+            return .ignored
+        }
+        perform(command)
+        return .handled
+    }
+
+    /// Interprets a resolved `ArticleKeyCommand` against the current `displayedArticles` / selection.
+    private func perform(_ command: ArticleKeyCommand) {
+        switch command {
+        case .nextArticle:
+            navState.selectNext(in: orderedIDs)
+        case .previousArticle:
+            navState.selectPrevious(in: orderedIDs)
+        case .openSelection:
+            openSelectedArticle()
+        case .toggleRead:
+            if let article = selectedArticle {
+                ArticleActions.toggleRead(article, context: modelContext)
+            }
+        case .markReadAndAdvance:
+            if let article = selectedArticle {
+                ArticleActions.markRead(article, context: modelContext)
+                navState.selectNext(in: orderedIDs)
+            }
+        case .markUnread:
+            if let article = selectedArticle {
+                ArticleActions.markUnread(article, context: modelContext)
+            }
+        case .nextCategory:
+            selectionBinding = CategoryCycler.next(after: selectionBinding, slugs: orderedCategorySlugs)
+        case .previousCategory:
+            selectionBinding = CategoryCycler.previous(before: selectionBinding, slugs: orderedCategorySlugs)
+        case .clearSelection:
+            navState.clear()
+        }
+    }
+
+    /// Ordered category slugs the cycler ('[' / ']' / Tab) walks — same order as the sidebar.
+    private var orderedCategorySlugs: [String] {
+        allCategories.map(\.slug)
+    }
+
+    /// Open the selected article via the SAME decision as a card tap: Reader if `tapOpensReader`,
+    /// else the external browser through the shared `ArticleOpener`.
+    private func openSelectedArticle() {
+        guard let article = selectedArticle else { return }
+        if tapOpensReader {
+            keyboardReaderArticle = article
+        } else {
+            ArticleOpener.openInBrowser(
+                article,
+                markRead: markReadOnOpen,
+                inBackground: openInBackground,
+                context: modelContext
+            )
+        }
+    }
+    #endif
 
     // MARK: - Recent searches (cluster E3)
 

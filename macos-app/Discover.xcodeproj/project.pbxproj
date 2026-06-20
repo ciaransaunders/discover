@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE03EE5554665A77F50F7CC6 /* NavigationStateModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DCEA82DE302F1610C43F3D /* NavigationStateModelTests.swift */; };
+		A994C621BF6937A0C3E15CC4 /* ArticleKeyCommandsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B0112F47B64FDA50210AEA /* ArticleKeyCommandsTests.swift */; };
+		88683F625F9F6B590EEB509F /* ArticleActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA076592AD9263F52DA424C /* ArticleActions.swift */; };
+		52961EFCD043EA3AD083FC33 /* ArticleKeyCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144D4F2D64F807F2702D9D47 /* ArticleKeyCommands.swift */; };
+		214AE1BBBE19AC050D0E7AB2 /* NavigationStateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD044909D4C6376BEBB1D7BE /* NavigationStateModel.swift */; };
 		632A52106AE659C27BB9E79F /* ArticleOpenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C846FC64388DD2706C926DC /* ArticleOpenerTests.swift */; };
 		7782FA1DACBB87CCF565D4AF /* AppAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A341D73D7F085CF4F56536 /* AppAppearanceTests.swift */; };
 		F80992067CC857FD1FCFBD52 /* ReaderFontFamilyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C2E78E408972F3E73FC833 /* ReaderFontFamilyTests.swift */; };
@@ -95,6 +100,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00DCEA82DE302F1610C43F3D /* NavigationStateModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NavigationStateModelTests.swift; path = DiscoverTests/Navigation/NavigationStateModelTests.swift; sourceTree = SOURCE_ROOT; };
+		78B0112F47B64FDA50210AEA /* ArticleKeyCommandsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleKeyCommandsTests.swift; path = DiscoverTests/Navigation/ArticleKeyCommandsTests.swift; sourceTree = SOURCE_ROOT; };
+		3AA076592AD9263F52DA424C /* ArticleActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleActions.swift; path = Discover/Core/Utilities/ArticleActions.swift; sourceTree = SOURCE_ROOT; };
+		144D4F2D64F807F2702D9D47 /* ArticleKeyCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleKeyCommands.swift; path = Discover/Features/ArticleList/ArticleKeyCommands.swift; sourceTree = SOURCE_ROOT; };
+		CD044909D4C6376BEBB1D7BE /* NavigationStateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NavigationStateModel.swift; path = Discover/Features/Navigation/NavigationStateModel.swift; sourceTree = SOURCE_ROOT; };
 		6C846FC64388DD2706C926DC /* ArticleOpenerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleOpenerTests.swift; path = DiscoverTests/ArticleOpenerTests.swift; sourceTree = SOURCE_ROOT; };
 		31A341D73D7F085CF4F56536 /* AppAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppAppearanceTests.swift; path = DiscoverTests/AppAppearanceTests.swift; sourceTree = SOURCE_ROOT; };
 		05C2E78E408972F3E73FC833 /* ReaderFontFamilyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReaderFontFamilyTests.swift; path = DiscoverTests/ReaderFontFamilyTests.swift; sourceTree = SOURCE_ROOT; };
@@ -259,6 +269,11 @@
 				05C2E78E408972F3E73FC833 /* ReaderFontFamilyTests.swift */,
 				31A341D73D7F085CF4F56536 /* AppAppearanceTests.swift */,
 				6C846FC64388DD2706C926DC /* ArticleOpenerTests.swift */,
+				CD044909D4C6376BEBB1D7BE /* NavigationStateModel.swift */,
+				144D4F2D64F807F2702D9D47 /* ArticleKeyCommands.swift */,
+				3AA076592AD9263F52DA424C /* ArticleActions.swift */,
+				78B0112F47B64FDA50210AEA /* ArticleKeyCommandsTests.swift */,
+				00DCEA82DE302F1610C43F3D /* NavigationStateModelTests.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -600,6 +615,9 @@
 				38A9324BCE8E3E274EA5BAA7 /* ArticleOpener.swift in Sources */,
 				3A9DB36936E62533A8ED1259 /* ReaderViewModel.swift in Sources */,
 				5AA813F59D75B71896F7E2BE /* ReaderView.swift in Sources */,
+				214AE1BBBE19AC050D0E7AB2 /* NavigationStateModel.swift in Sources */,
+				52961EFCD043EA3AD083FC33 /* ArticleKeyCommands.swift in Sources */,
+				88683F625F9F6B590EEB509F /* ArticleActions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,6 +645,8 @@
 				F80992067CC857FD1FCFBD52 /* ReaderFontFamilyTests.swift in Sources */,
 				7782FA1DACBB87CCF565D4AF /* AppAppearanceTests.swift in Sources */,
 				632A52106AE659C27BB9E79F /* ArticleOpenerTests.swift in Sources */,
+				A994C621BF6937A0C3E15CC4 /* ArticleKeyCommandsTests.swift in Sources */,
+				FE03EE5554665A77F50F7CC6 /* NavigationStateModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

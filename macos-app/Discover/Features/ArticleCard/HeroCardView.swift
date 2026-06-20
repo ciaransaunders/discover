@@ -5,6 +5,8 @@ import SwiftUI
 struct HeroCardView: View {
   @Bindable var article: ArticleModel
   let colorHex: String
+  /// Cluster B1 — keyboard selection ring. Defaulted so existing call sites keep compiling.
+  var isSelected: Bool = false
   @Environment(\.modelContext) private var modelContext
 
   #if os(macOS)
@@ -22,6 +24,14 @@ struct HeroCardView: View {
     heroLayout
       .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 240)
       .glassCard(cornerRadius: 16)
+      // Cluster B1 — keyboard-selection ring in the category accent colour, over the glass.
+      .overlay {
+        if isSelected {
+          RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .strokeBorder(Color(hex: colorHex), lineWidth: 3)
+            .accessibilityHidden(true)
+        }
+      }
       .opacity(article.isRead ? 0.75 : 1)
       #if os(macOS)
       .scaleEffect(isHovering ? 1.01 : 1)
