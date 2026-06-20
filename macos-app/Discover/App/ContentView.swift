@@ -8,7 +8,16 @@ struct ContentView: View {
 
     @Environment(\.modelContext) private var modelContext
 
-    @State private var selection: SidebarSelection = .all
+    /// Cluster F2 — the selection this window opens on. Each `WindowGroup(for:)` window passes its
+    /// own value so windows are independent; `nil` (or the default) opens on `.all`.
+    let launchSelection: SidebarSelection?
+
+    @State private var selection: SidebarSelection
+
+    init(launchSelection: SidebarSelection? = nil) {
+        self.launchSelection = launchSelection
+        _selection = State(initialValue: launchSelection ?? .all)
+    }
 
     /// Keyboard navigation / selected-article state (cluster B1). Owned here and injected via
     /// `.environment` so every `ArticleListView` (and its cards) shares one selection.
@@ -19,6 +28,11 @@ struct ContentView: View {
     /// `ArticleListView`.
     @State private var refreshScheduler = RefreshScheduler(viewModel: ArticleListViewModel())
     @State private var setupErrorMessage: String?
+
+    /// Cluster F2 — live category/folder slugs, used to resolve a restored window selection that may
+    /// reference a since-deleted category/folder back to `.all`.
+    @Query private var categories: [CategoryModel]
+    @Query private var folders: [FolderModel]
 
     var body: some View {
         content
@@ -32,6 +46,11 @@ struct ContentView: View {
                 } catch {
                     setupErrorMessage = error.localizedDescription
                 }
+                // Cluster F2 — drop a restored selection that points at a deleted category/folder.
+                selection = selection.resolved(
+                    availableCategorySlugs: Set(categories.map(\.slug)),
+                    availableFolderSlugs: Set(folders.map(\.slug))
+                )
                 refreshScheduler.start(context: modelContext)
             }
             .alert("Setup failed", isPresented: Binding(

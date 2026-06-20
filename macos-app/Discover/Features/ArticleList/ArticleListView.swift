@@ -26,6 +26,9 @@ struct ArticleListView: View {
     @AppStorage("recentSearches") private var recentSearchesJSON: String = "[]"
     /// Cluster C2 — hide already-read articles from the list (view-layer only, no schema).
     @AppStorage("hideReadArticles") private var hideReadArticles = false
+    /// Cluster F1 — view options (no schema). Persisted by stable rawValue; applied in-memory.
+    @AppStorage("articleSortOrder") private var sortOrderRaw = ArticleSortOrder.default.rawValue
+    @AppStorage("articleListDensity") private var densityRaw = ArticleListDensity.default.rawValue
     /// Cluster B2 — open path for space/return must match the card tap (Reader vs browser).
     @AppStorage("tapOpensReader") private var tapOpensReader = true
     @AppStorage("markReadOnOpen") private var markReadOnOpen = true
@@ -60,8 +63,16 @@ struct ArticleListView: View {
     /// Folders — used to resolve the nav title for a `.folder` selection to its stored name.
     @Query(sort: \FolderModel.priority) private var folders: [FolderModel]
 
-    // Grid layout: adaptive columns, minimum 280 pt wide.
-    private let columns = [GridItem(.adaptive(minimum: 280, maximum: 380), spacing: 16)]
+    // Grid layout: adaptive columns whose minimum width is driven by the view-density option
+    // (cluster F1). `.comfortable` reproduces the historical 280–380 pt range.
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: density.minColumnWidth, maximum: density.maxColumnWidth), spacing: 16)]
+    }
+
+    /// The resolved view options (cluster F1), decoded from the persisted rawValues with a safe
+    /// fallback to the defaults if a stored value is ever corrupted.
+    private var sortOrder: ArticleSortOrder { ArticleSortOrder(rawValue: sortOrderRaw) ?? .default }
+    private var density: ArticleListDensity { ArticleListDensity(rawValue: densityRaw) ?? .default }
 
     /// For `.folder`, the resolved member feed URLs (carried in the selection). The folder query is
     /// unfiltered (OQ-2) and membership is applied in-memory in `displayedArticles` from these.
@@ -131,6 +142,10 @@ struct ArticleListView: View {
         // Cluster C2 — drop read articles when "Hide read" is on.
         result = ArticleVisibilityFilter.visible(result, hideRead: hideReadArticles) { $0.isRead }
 
+        // Cluster F1 — apply the chosen view-options sort as a final in-memory re-sort. The hero is
+        // `displayedArticles[0]` and the grid is the rest, so this also controls the featured story.
+        result = sortOrder.sorted(result)
+
         return result
     }
 
@@ -198,58 +213,7 @@ struct ArticleListView: View {
             recordRecentSearch(searchText)
         }
         .navigationTitle(navTitle)
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                // Hide-read quick toggle (cluster C2).
-                Button {
-                    hideReadArticles.toggle()
-                } label: {
-                    Label(
-                        hideReadArticles ? "Show Read" : "Hide Read",
-                        systemImage: hideReadArticles ? "eye.slash.fill" : "eye.slash"
-                    )
-                }
-                .help(hideReadArticles ? "Show read articles" : "Hide read articles")
-
-                // Mark All Read button
-                Button {
-                    markAllRead()
-                } label: {
-                    Label("Mark All Read", systemImage: "checkmark.circle")
-                }
-                .disabled(displayedArticles.allSatisfy(\.isRead))
-
-                // Feed Manager button
-                Button { showFeedMgr = true } label: {
-                    Label("Feeds", systemImage: "dot.radiowaves.up.forward")
-                }
-
-                // Refresh button
-                Button {
-                    Task { await viewModel.refresh(context: modelContext) }
-                } label: {
-                    if viewModel.isRefreshing {
-                        ProgressView().controlSize(.small)
-                    } else {
-                        Label("Refresh", systemImage: "arrow.clockwise")
-                    }
-                }
-                .disabled(viewModel.isRefreshing)
-            }
-
-            // Last-refreshed timestamp — use the same compact relative format as cards
-            if let ts = viewModel.lastRefreshed {
-                ToolbarItem(placement: .status) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "checkmark.circle")
-                            .font(.caption2)
-                        TimeAgoText(date: ts)
-                    }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                }
-            }
-        }
+        .modifier(articleToolbar)
         // Seed defaults (idempotent) so an empty category never shows up un-seeded. The
         // app-lifetime background refresh loop + initial fetch are owned by `RefreshScheduler`
         // in `ContentView` (cluster E2) — this view no longer runs its own refresh timer.
@@ -299,6 +263,47 @@ struct ArticleListView: View {
         } message: {
             Text(setupErrorMessage ?? "")
         }
+    }
+
+    // MARK: - Toolbar (cluster F1)
+
+    /// Bindings adapting the persisted view-option rawValues to their typed enums for the toolbar
+    /// menus (the `@AppStorage` properties store stable rawValues).
+    private var sortOrderBinding: Binding<ArticleSortOrder> {
+        Binding(get: { sortOrder }, set: { sortOrderRaw = $0.rawValue })
+    }
+    private var densityBinding: Binding<ArticleListDensity> {
+        Binding(get: { density }, set: { densityRaw = $0.rawValue })
+    }
+
+    /// The platform-appropriate toolbar.
+    ///
+    /// macOS uses the identified, customisable `ArticleListToolbar` via `.toolbar(id:)` (cluster F1).
+    /// iOS keeps the original inline `ToolbarItemGroup` so the iPhone/iPad branches stay valid.
+    private var articleToolbar: some ViewModifier {
+        #if os(macOS)
+        return MacArticleToolbarModifier(
+            sortOrder: sortOrderBinding,
+            density: densityBinding,
+            hideRead: $hideReadArticles,
+            isRefreshing: viewModel.isRefreshing,
+            lastRefreshed: viewModel.lastRefreshed,
+            canMarkAllRead: !displayedArticles.allSatisfy(\.isRead),
+            onRefresh: { Task { await viewModel.refresh(context: modelContext) } },
+            onForceRefresh: { Task { await viewModel.forceRefresh(context: modelContext) } },
+            onMarkAllRead: { markAllRead() },
+            onOpenFeeds: { showFeedMgr = true }
+        )
+        #else
+        return InlineArticleToolbarModifier(
+            hideRead: $hideReadArticles,
+            isRefreshing: viewModel.isRefreshing,
+            canMarkAllRead: !displayedArticles.allSatisfy(\.isRead),
+            onRefresh: { Task { await viewModel.refresh(context: modelContext) } },
+            onMarkAllRead: { markAllRead() },
+            onOpenFeeds: { showFeedMgr = true }
+        )
+        #endif
     }
 
     // MARK: - Article scroll region (focusable, keyboard-navigable)

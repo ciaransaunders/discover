@@ -24,6 +24,13 @@
     <true/>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
+    <!-- AppleScript support (cluster F3). NSAppleScriptEnabled makes the app scriptable;
+         OSAScriptingDefinition names the bundled terminology file. Minimal v1 surface
+         (refresh feeds / force refresh feeds / read-only counts) — no apple-events entitlement. -->
+    <key>NSAppleScriptEnabled</key>
+    <true/>
+    <key>OSAScriptingDefinition</key>
+    <string>Discover.sdef</string>
     <!-- Network access for RSS feed fetching and OG image scraping -->
     <key>NSAppTransportSecurity</key>
     <dict>

@@ -66,6 +66,31 @@ extension SidebarSelection {
     }
 }
 
+// MARK: - Restoration resolution (cluster F2)
+
+extension SidebarSelection {
+    /// Resolves a (possibly stale) restored selection against the categories/folders that currently
+    /// exist, falling back to `.all` when the referenced category or folder has since been deleted.
+    ///
+    /// Multi-window state restoration (`WindowGroup(for:)`) can hand back a `.category`/`.folder`
+    /// selection whose slug no longer exists; opening such a window would otherwise show an empty
+    /// list with a stale title. Pure (takes the existing slug sets as parameters) so it is testable
+    /// without SwiftData.
+    func resolved(
+        availableCategorySlugs: Set<String>,
+        availableFolderSlugs: Set<String>
+    ) -> SidebarSelection {
+        switch self {
+        case .category(let slug):
+            return availableCategorySlugs.contains(slug) ? self : .all
+        case .folder(let slug, _):
+            return availableFolderSlugs.contains(slug) ? self : .all
+        case .all, .allUnread, .today, .starred:
+            return self
+        }
+    }
+}
+
 // MARK: - String round-trip (lossless, manual)
 
 // A compact, self-contained string encoding so the type can drive `@AppStorage` and the iOS

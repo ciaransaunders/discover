@@ -13,24 +13,35 @@ struct DiscoverApp: App {
     /// injected via `.environment` so every view (incl. detached sheets) shares one instance.
     @State private var theme = ReaderThemeManager()
 
+    #if os(macOS)
+    /// Cluster F3 — hosts AppleScript read-only scriptability (`unread count` / `article count`).
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    #endif
+
     init() {
         let (container, errorMessage) = Self.makeModelContainer()
         self.modelContainer = container
         _modelInitError = State(initialValue: errorMessage)
+        #if os(macOS)
+        // Cluster F3 — give the scripting layer a reference to the shared container for read-only
+        // counts. Set here (not in the adaptor) because the container is created in this init.
+        AppDelegate.sharedModelContainer = container
+        #endif
     }
 
     #if os(macOS)
-    @State private var showPreferences = false
+    /// Cluster F2 — used by the ⌘N "New Window" command to open an independent window.
+    @Environment(\.openWindow) private var openWindow
     #endif
 
     var body: some Scene {
-        WindowGroup {
-            #if os(macOS)
-            ContentView()
+        #if os(macOS)
+        // Cluster F2 — a value-presenting WindowGroup so each window carries its own
+        // `SidebarSelection` and is fully independent. The single injected `ModelContainer` is shared
+        // across every window, so live `@Query` reads stay consistent everywhere.
+        WindowGroup(for: SidebarSelection.self) { $selection in
+            ContentView(launchSelection: selection)
                 .frame(minWidth: 900, minHeight: 600)
-                .sheet(isPresented: $showPreferences) {
-                    PreferencesView()
-                }
                 .alert("Data Store Issue", isPresented: Binding(
                     get: { modelInitError != nil },
                     set: { if !$0 { modelInitError = nil } }
@@ -43,16 +54,19 @@ struct DiscoverApp: App {
                 // content root so sheets inherit it (cluster A3).
                 .environment(theme)
                 .preferredColorScheme(theme.resolvedColorScheme)
-            #else
-            ContentView()
-                .environment(theme)
-                .preferredColorScheme(theme.resolvedColorScheme)
-            #endif
         }
         .modelContainer(modelContainer)
-        #if os(macOS)
+        // OQ-9: keep the hidden title bar — multi-window does not change the window style.
         .windowStyle(.hiddenTitleBar)
         .commands {
+            // ⌘N — open a new, independent window (cluster F2). Replaces the default New Item.
+            CommandGroup(replacing: .newItem) {
+                Button("New Window") {
+                    openWindow(value: SidebarSelection.all)
+                }
+                .keyboardShortcut("n", modifiers: .command)
+            }
+
             // ⌘R — Refresh all feeds
             CommandGroup(after: .toolbar) {
                 Button("Refresh Feeds") {
@@ -65,15 +79,23 @@ struct DiscoverApp: App {
                 }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
             }
-
-            // ⌘, — Preferences
-            CommandGroup(replacing: .appSettings) {
-                Button("Preferences…") {
-                    showPreferences = true
-                }
-                .keyboardShortcut(",", modifiers: .command)
-            }
         }
+
+        // Cluster F2 — preferences as a dedicated Settings scene (⌘, opens it). This avoids a single
+        // app-level `@State` sheet that does not fit multi-window, while keeping the existing
+        // PreferencesView and the standard ⌘, shortcut working. Theme injected so it matches.
+        Settings {
+            PreferencesView()
+                .environment(theme)
+                .preferredColorScheme(theme.resolvedColorScheme)
+        }
+        #else
+        WindowGroup {
+            ContentView()
+                .environment(theme)
+                .preferredColorScheme(theme.resolvedColorScheme)
+        }
+        .modelContainer(modelContainer)
         #endif
     }
 }

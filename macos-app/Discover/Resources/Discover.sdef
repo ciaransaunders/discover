@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
+<dictionary title="Discover Terminology">
+
+    <suite name="Discover Suite" code="Disc" description="Discover-specific commands and classes.">
+
+        <!-- Read-only application properties (cluster F3, OQ-10 minimal surface). -->
+        <class name="application" code="capp" description="The Discover application.">
+            <cocoa class="NSApplication"/>
+            <property name="unread count" code="DurC" type="integer" access="r"
+                description="The number of unread articles in the store.">
+                <cocoa key="unreadCount"/>
+            </property>
+            <property name="article count" code="DarC" type="integer" access="r"
+                description="The total number of articles in the store.">
+                <cocoa key="articleCount"/>
+            </property>
+        </class>
+
+        <!-- Action verbs. These only post the app's existing refresh notifications; they do not
+             mutate the store, so no apple-events entitlement is required (OQ-10). -->
+        <command name="refresh feeds" code="DiscRfsh"
+            description="Refresh all enabled feeds.">
+            <cocoa class="Discover.RefreshFeedsCommand"/>
+        </command>
+
+        <command name="force refresh feeds" code="DiscFrsh"
+            description="Force-refresh all enabled feeds, ignoring any in-flight refresh.">
+            <cocoa class="Discover.ForceRefreshFeedsCommand"/>
+        </command>
+
+    </suite>
+
+</dictionary>
