@@ -33,6 +33,14 @@ final class ArticleModel {
     /// Timestamp when this record was written to the store.
     var fetchedAt: Date
 
+    /// Full article body (content:encoded / atom:content) for the in-app Reader.
+    /// Optional & additive (schema v2, cluster A) — `nil` for articles stored before v2.
+    var content: String?
+
+    /// Whether the user has starred (saved) this article.
+    /// Additive (schema v2, cluster C); defaults to `false`.
+    var isStarred: Bool
+
     init(
         id: String,
         title: String,
@@ -44,7 +52,9 @@ final class ArticleModel {
         publishedAt: Date,
         isRead: Bool = false,
         feedUrl: String? = nil,
-        fetchedAt: Date = .now
+        fetchedAt: Date = .now,
+        content: String? = nil,
+        isStarred: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -57,5 +67,7 @@ final class ArticleModel {
         self.isRead = isRead
         self.feedUrl = feedUrl
         self.fetchedAt = fetchedAt
+        self.content = content
+        self.isStarred = isStarred
     }
 }

@@ -30,17 +30,23 @@ final class FeedModel {
     /// Stores the last error description if a fetch failed; `nil` on success.
     var lastError: String?
 
+    /// When the feed was added to the store. Additive & optional (schema v2, cluster E);
+    /// `nil` for feeds seeded/added before v2. Used to sort user-added feeds.
+    var createdAt: Date?
+
     init(
         url: String,
         name: String,
         category: String,
         useOgImage: Bool = false,
-        enabled: Bool = true
+        enabled: Bool = true,
+        createdAt: Date? = nil
     ) {
         self.url = url
         self.name = name
         self.category = category
         self.useOgImage = useOgImage
         self.enabled = enabled
+        self.createdAt = createdAt
     }
 }

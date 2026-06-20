@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B63F0A64275A777AF835E99 /* SidebarSelectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC666E52E385886A4221B0B /* SidebarSelectionTests.swift */; };
+		D65A8EDEF36B17F1FD104538 /* DiscoverSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4FD7802ED0869B5533B0F2 /* DiscoverSchema.swift */; };
+		CB03FE072F33B078C973BC8F /* SidebarSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1215F84DE72E63AD8EBDA /* SidebarSelection.swift */; };
+		555809EC9A90A0C1AD55A1F7 /* FolderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3126CBA84393FA9A5DFCF869 /* FolderModel.swift */; };
 		91AA013A2F547FB300C5D32F /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AA01392F547FB300C5D32F /* PreferencesView.swift */; };
 		AA000001000000000000001A /* DiscoverApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000001A /* DiscoverApp.swift */; };
 		AA000001000000000000001B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000001B /* ContentView.swift */; };
@@ -55,6 +59,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EDC666E52E385886A4221B0B /* SidebarSelectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarSelectionTests.swift; path = DiscoverTests/SidebarSelectionTests.swift; sourceTree = SOURCE_ROOT; };
+		7E4FD7802ED0869B5533B0F2 /* DiscoverSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DiscoverSchema.swift; path = Discover/Core/Models/DiscoverSchema.swift; sourceTree = SOURCE_ROOT; };
+		C9A1215F84DE72E63AD8EBDA /* SidebarSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarSelection.swift; path = Discover/Core/Models/SidebarSelection.swift; sourceTree = SOURCE_ROOT; };
+		3126CBA84393FA9A5DFCF869 /* FolderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderModel.swift; path = Discover/Core/Models/FolderModel.swift; sourceTree = SOURCE_ROOT; };
 		91AA01392F547FB300C5D32F /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		BB000001000000000000001A /* DiscoverApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverApp.swift; sourceTree = "<group>"; };
 		BB000001000000000000001B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -139,6 +147,10 @@
 				DD000001000000000000001C /* Discover */,
 				DD000001000000000000003B /* DiscoverTests */,
 				DD000001000000000000001B /* Products */,
+				3126CBA84393FA9A5DFCF869 /* FolderModel.swift */,
+				C9A1215F84DE72E63AD8EBDA /* SidebarSelection.swift */,
+				7E4FD7802ED0869B5533B0F2 /* DiscoverSchema.swift */,
+				EDC666E52E385886A4221B0B /* SidebarSelectionTests.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -459,6 +471,9 @@
 				AA000001000000000000005F /* HeroCardView.swift in Sources */,
 				AA000001000000000000006A /* FeedManagerViewModel.swift in Sources */,
 				AA000001000000000000006B /* FeedManagerView.swift in Sources */,
+				555809EC9A90A0C1AD55A1F7 /* FolderModel.swift in Sources */,
+				CB03FE072F33B078C973BC8F /* SidebarSelection.swift in Sources */,
+				D65A8EDEF36B17F1FD104538 /* DiscoverSchema.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +482,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA000001000000000000002E /* DiscoverTests.swift in Sources */,
+				9B63F0A64275A777AF835E99 /* SidebarSelectionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

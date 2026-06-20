@@ -79,22 +79,28 @@ extension Notification.Name {
 
 extension DiscoverApp {
     private static func makeModelContainer() -> (ModelContainer, String?) {
-        let schema = Schema([
-            ArticleModel.self,
-            FeedModel.self,
-            CategoryModel.self,
-        ])
+        // Build from the latest versioned schema and run the explicit migration plan so existing
+        // on-disk stores migrate (lightweight) rather than being discarded. See `DiscoverSchema`.
+        let schema = Schema(versionedSchema: DiscoverCurrentSchema.self)
 
         // Prefer persistent storage, but fall back to in-memory if the store cannot be opened
-        // (e.g. permissions, corruption, schema mismatch). Avoid crashing on first launch.
+        // (e.g. permissions, corruption, unmigratable schema mismatch). Avoid crashing on first launch.
         let diskConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
-            return (try ModelContainer(for: schema, configurations: [diskConfig]), nil)
+            return (try ModelContainer(
+                for: schema,
+                migrationPlan: DiscoverMigrationPlan.self,
+                configurations: [diskConfig]
+            ), nil)
         } catch {
             let errorMessage = "Couldn't open the on-disk database. Discover will run using in-memory storage for this session.\n\n\(error)"
             let memConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
             do {
-                return (try ModelContainer(for: schema, configurations: [memConfig]), errorMessage)
+                return (try ModelContainer(
+                    for: schema,
+                    migrationPlan: DiscoverMigrationPlan.self,
+                    configurations: [memConfig]
+                ), errorMessage)
             } catch {
                 fatalError("SwiftData container failed to initialise (even in-memory): \(error)")
             }
