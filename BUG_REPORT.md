@@ -23,7 +23,18 @@ inbox scaffolding (`AppGroup`, `PendingFeed`, `PendingFeedInbox`, `SharedFeedImp
 was removed so no dead, non-functional App-Group code remains in a bug-*elimination* phase.
 
 **Final gate:** clean build with **0 warnings / 0 errors**; full Swift Testing suite green on **two
-consecutive runs** (`TEST SUCCEEDED`, 0 failures both times).
+consecutive runs** (`TEST SUCCEEDED`, 0 failures both times); **no crash on launch** (app launched
+from the built bundle, stayed alive, crash-report delta = 0).
+
+**AppleScript verification (goal "How to verify"):** the `.sdef` **loads** (`sdef Discover.app`
+emits the full dictionary; `OSAScriptingDefinition` + `NSAppleScriptEnabled` set in Info.plist;
+`SdefValidationTests` green) and both the **command** (`refresh feeds`) and **property**
+(`unread count` / `article count`) terminology **resolve via `osascript`/`osacompile`** when our
+build is the registered `com.discover.app` handler. (Diagnostic note: terminology initially appeared
+to fail only because several **stale `com.discover.app` builds** were registered with LaunchServices
+and won name resolution — not an sdef defect; **no sdef change was required**.) Runtime command
+execution returns `-1743` only because the macOS **Automation (TCC) consent** for controlling the
+app cannot be granted in a non-interactive shell — a one-time user approval, not a code issue.
 
 ## Performance / image quality (2026-06-20, from live-app feedback) 🟠
 
