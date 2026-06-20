@@ -14,19 +14,12 @@ struct FaviconImage: View {
 
     var body: some View {
         if let url = faviconURL {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .interpolation(.high)
-                        .scaledToFit()
-                        .frame(width: size, height: size)
-                        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
-                default:
-                    fallbackIcon
-                }
+            // Cached + downsampled so favicons aren't re-fetched from Google on every scroll.
+            CachedAsyncImage(url: url, maxPixel: 128, contentMode: .fit) {
+                fallbackIcon
             }
+            .frame(width: size, height: size)
+            .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
         } else {
             fallbackIcon
         }

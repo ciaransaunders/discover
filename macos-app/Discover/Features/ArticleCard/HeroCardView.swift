@@ -116,14 +116,9 @@ struct HeroCardView: View {
 
   private var thumbnailArea: some View {
     Group {
-      if let thumb = article.thumbnail, let url = URL(string: thumb) {
-        AsyncImage(url: url) { phase in
-          switch phase {
-          case .success(let image):
-            image.resizable().scaledToFill()
-          default:
-            placeholderThumb
-          }
+      if let thumb = article.thumbnail, let url = URL(string: ImageURLUpgrader.upgrade(thumb)) {
+        CachedAsyncImage(url: url, maxPixel: 900) {
+          placeholderThumb
         }
       } else {
         placeholderThumb

@@ -1,5 +1,15 @@
 # BUG REPORT — Discover Project
 
+## Performance / image quality (2026-06-20, from live-app feedback) 🟠
+
+User observed the running app was "very slow" and "some pictures pulled are very low res".
+
+| # | Location | Defect | Fix |
+|---|---|---|---|
+| P1 | `ArticleCardView`, `HeroCardView`, `FaviconImage` | All images used SwiftUI `AsyncImage`, which does **not cache decoded images**. In the `LazyVGrid` masonry every card re-downloaded + re-decoded its thumbnail **and** a per-card Google favicon every time it scrolled back into view → the dominant cause of jank. | New `ImageLoader` actor: size-capped `NSCache` of decoded images, on-disk `URLCache`, in-flight de-duplication. New `CachedAsyncImage` drop-in used by both cards + favicon. |
+| P2 | image decode path | Full-size originals were decoded at full resolution into a 160pt card (wasted CPU/memory). | `ImageLoader` downsamples via ImageIO `CGImageSourceCreateThumbnailAtIndex` to the display size. |
+| P3 | `ThumbnailExtractor` / feeds without `useOgImage` | Low-res `media:thumbnail` images were upscaled to fill the card → blurry (e.g. BBC). High-res `og:image` upgrade only ran for flagged feeds. | New `ImageURLUpgrader` (conservative, signature-safe): bumps BBC iChef width path segment to `/976/` and strips WordPress `-WxH` resize suffixes; applied at display so existing stored articles benefit. Does **not** touch query-signed CDNs (e.g. Guardian). |
+
 ## Phase 0 — Baseline build/test repair (2026-06-20) 🟥 BLOCKER
 
 `main` did **not** compile and the test target had **never run**. Eight distinct pre-existing

@@ -114,18 +114,12 @@ struct ArticleCardView: View {
 
   private var thumbnailArea: some View {
     Group {
-      if let thumb = article.thumbnail, let url = URL(string: thumb) {
-        AsyncImage(url: url) { phase in
-          switch phase {
-          case .success(let image):
-            image
-              .resizable()
-              .scaledToFill()
-          default:
-            placeholderThumb
-          }
+      if let thumb = article.thumbnail, let url = URL(string: ImageURLUpgrader.upgrade(thumb)) {
+        CachedAsyncImage(url: url, maxPixel: 1000) {
+          placeholderThumb
         }
         .frame(height: 160)
+        .frame(maxWidth: .infinity)
         .clipped()
       } else {
         placeholderThumb.frame(height: 100)
