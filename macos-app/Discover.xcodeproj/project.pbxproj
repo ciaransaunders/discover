@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		632A52106AE659C27BB9E79F /* ArticleOpenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C846FC64388DD2706C926DC /* ArticleOpenerTests.swift */; };
+		7782FA1DACBB87CCF565D4AF /* AppAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A341D73D7F085CF4F56536 /* AppAppearanceTests.swift */; };
+		F80992067CC857FD1FCFBD52 /* ReaderFontFamilyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C2E78E408972F3E73FC833 /* ReaderFontFamilyTests.swift */; };
+		CDF6BFEE57F1DCD0365CDE2A /* ReaderThemeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B978819297FE31BF74142B /* ReaderThemeManagerTests.swift */; };
+		90F39CA2C53303ADB599388C /* UpsertContentPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84746419EEBCED9F4EF7BA27 /* UpsertContentPersistenceTests.swift */; };
+		866C0D262BCB6A31EDCF4A3A /* HTMLStripperParagraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1138256A72700C3BDBC249B7 /* HTMLStripperParagraphTests.swift */; };
+		160D1FCE96E9834DF0B947FE /* ReaderBodyResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B17F25EF4F2DC6F02AD0CB /* ReaderBodyResolverTests.swift */; };
+		5AA813F59D75B71896F7E2BE /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8767B08B2423BAA23FAD1B9 /* ReaderView.swift */; };
+		3A9DB36936E62533A8ED1259 /* ReaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701590A438B350D006EF1227 /* ReaderViewModel.swift */; };
+		38A9324BCE8E3E274EA5BAA7 /* ArticleOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E97C2B1894A0A61D4C9EE6 /* ArticleOpener.swift */; };
+		DF8C83C5E84E7C06247550C0 /* ReaderThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6647DF417E427CC326969C9 /* ReaderThemeManager.swift */; };
+		BCFEB2AB52489E8D35CCE2CB /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38DC61734A69F9D7FBE27793 /* AppAppearance.swift */; };
+		D12B490DA21E655E14BBEAAC /* ReaderFontFamily.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D801225CFE87FA1AB448649 /* ReaderFontFamily.swift */; };
 		7FDF017AA2103CA289922A5B /* HideReadFilteringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7608231D1DB1B70573CE94 /* HideReadFilteringTests.swift */; };
 		4AA496859A4ACF1BD2E42B9F /* SmartFeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D77B9076ECF4364027B2495 /* SmartFeedTests.swift */; };
 		7031B2AF2919FE40ECDF8D19 /* FolderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68833CDF663BBC8BD44BC6B /* FolderTests.swift */; };
@@ -82,6 +95,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6C846FC64388DD2706C926DC /* ArticleOpenerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleOpenerTests.swift; path = DiscoverTests/ArticleOpenerTests.swift; sourceTree = SOURCE_ROOT; };
+		31A341D73D7F085CF4F56536 /* AppAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppAppearanceTests.swift; path = DiscoverTests/AppAppearanceTests.swift; sourceTree = SOURCE_ROOT; };
+		05C2E78E408972F3E73FC833 /* ReaderFontFamilyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReaderFontFamilyTests.swift; path = DiscoverTests/ReaderFontFamilyTests.swift; sourceTree = SOURCE_ROOT; };
+		D0B978819297FE31BF74142B /* ReaderThemeManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReaderThemeManagerTests.swift; path = DiscoverTests/ReaderThemeManagerTests.swift; sourceTree = SOURCE_ROOT; };
+		84746419EEBCED9F4EF7BA27 /* UpsertContentPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UpsertContentPersistenceTests.swift; path = DiscoverTests/UpsertContentPersistenceTests.swift; sourceTree = SOURCE_ROOT; };
+		1138256A72700C3BDBC249B7 /* HTMLStripperParagraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTMLStripperParagraphTests.swift; path = DiscoverTests/HTMLStripperParagraphTests.swift; sourceTree = SOURCE_ROOT; };
+		93B17F25EF4F2DC6F02AD0CB /* ReaderBodyResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReaderBodyResolverTests.swift; path = DiscoverTests/ReaderBodyResolverTests.swift; sourceTree = SOURCE_ROOT; };
+		C8767B08B2423BAA23FAD1B9 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReaderView.swift; path = Discover/Features/Reader/ReaderView.swift; sourceTree = SOURCE_ROOT; };
+		701590A438B350D006EF1227 /* ReaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReaderViewModel.swift; path = Discover/Features/Reader/ReaderViewModel.swift; sourceTree = SOURCE_ROOT; };
+		66E97C2B1894A0A61D4C9EE6 /* ArticleOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleOpener.swift; path = Discover/Core/Utilities/ArticleOpener.swift; sourceTree = SOURCE_ROOT; };
+		C6647DF417E427CC326969C9 /* ReaderThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReaderThemeManager.swift; path = Discover/UI/Theme/ReaderThemeManager.swift; sourceTree = SOURCE_ROOT; };
+		38DC61734A69F9D7FBE27793 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppAppearance.swift; path = Discover/UI/Theme/AppAppearance.swift; sourceTree = SOURCE_ROOT; };
+		7D801225CFE87FA1AB448649 /* ReaderFontFamily.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReaderFontFamily.swift; path = Discover/UI/Theme/ReaderFontFamily.swift; sourceTree = SOURCE_ROOT; };
 		DA7608231D1DB1B70573CE94 /* HideReadFilteringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HideReadFilteringTests.swift; path = DiscoverTests/HideReadFilteringTests.swift; sourceTree = SOURCE_ROOT; };
 		5D77B9076ECF4364027B2495 /* SmartFeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SmartFeedTests.swift; path = DiscoverTests/SmartFeedTests.swift; sourceTree = SOURCE_ROOT; };
 		D68833CDF663BBC8BD44BC6B /* FolderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTests.swift; path = DiscoverTests/FolderTests.swift; sourceTree = SOURCE_ROOT; };
@@ -220,6 +246,19 @@
 				D68833CDF663BBC8BD44BC6B /* FolderTests.swift */,
 				5D77B9076ECF4364027B2495 /* SmartFeedTests.swift */,
 				DA7608231D1DB1B70573CE94 /* HideReadFilteringTests.swift */,
+				7D801225CFE87FA1AB448649 /* ReaderFontFamily.swift */,
+				38DC61734A69F9D7FBE27793 /* AppAppearance.swift */,
+				C6647DF417E427CC326969C9 /* ReaderThemeManager.swift */,
+				66E97C2B1894A0A61D4C9EE6 /* ArticleOpener.swift */,
+				701590A438B350D006EF1227 /* ReaderViewModel.swift */,
+				C8767B08B2423BAA23FAD1B9 /* ReaderView.swift */,
+				93B17F25EF4F2DC6F02AD0CB /* ReaderBodyResolverTests.swift */,
+				1138256A72700C3BDBC249B7 /* HTMLStripperParagraphTests.swift */,
+				84746419EEBCED9F4EF7BA27 /* UpsertContentPersistenceTests.swift */,
+				D0B978819297FE31BF74142B /* ReaderThemeManagerTests.swift */,
+				05C2E78E408972F3E73FC833 /* ReaderFontFamilyTests.swift */,
+				31A341D73D7F085CF4F56536 /* AppAppearanceTests.swift */,
+				6C846FC64388DD2706C926DC /* ArticleOpenerTests.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -555,6 +594,12 @@
 				AF41FCD8BC20CE67769C00D4 /* ArticleSearchScope.swift in Sources */,
 				1F4BCBD80D875D12B8F630A8 /* ArticleVisibilityFilter.swift in Sources */,
 				934D0D795035B0EE64FDE081 /* SmartFeedPredicates.swift in Sources */,
+				D12B490DA21E655E14BBEAAC /* ReaderFontFamily.swift in Sources */,
+				BCFEB2AB52489E8D35CCE2CB /* AppAppearance.swift in Sources */,
+				DF8C83C5E84E7C06247550C0 /* ReaderThemeManager.swift in Sources */,
+				38A9324BCE8E3E274EA5BAA7 /* ArticleOpener.swift in Sources */,
+				3A9DB36936E62533A8ED1259 /* ReaderViewModel.swift in Sources */,
+				5AA813F59D75B71896F7E2BE /* ReaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,6 +620,13 @@
 				7031B2AF2919FE40ECDF8D19 /* FolderTests.swift in Sources */,
 				4AA496859A4ACF1BD2E42B9F /* SmartFeedTests.swift in Sources */,
 				7FDF017AA2103CA289922A5B /* HideReadFilteringTests.swift in Sources */,
+				160D1FCE96E9834DF0B947FE /* ReaderBodyResolverTests.swift in Sources */,
+				866C0D262BCB6A31EDCF4A3A /* HTMLStripperParagraphTests.swift in Sources */,
+				90F39CA2C53303ADB599388C /* UpsertContentPersistenceTests.swift in Sources */,
+				CDF6BFEE57F1DCD0365CDE2A /* ReaderThemeManagerTests.swift in Sources */,
+				F80992067CC857FD1FCFBD52 /* ReaderFontFamilyTests.swift in Sources */,
+				7782FA1DACBB87CCF565D4AF /* AppAppearanceTests.swift in Sources */,
+				632A52106AE659C27BB9E79F /* ArticleOpenerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

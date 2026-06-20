@@ -1,12 +1,5 @@
 import SwiftUI
 
-#if canImport(AppKit)
-  import AppKit
-#endif
-#if canImport(UIKit)
-  import UIKit
-#endif
-
 /// Standard article card: thumbnail, badge, title, snippet, source + timestamp.
 /// Uses Liquid Glass material — no opaque custom backgrounds.
 struct ArticleCardView: View {
@@ -20,6 +13,10 @@ struct ArticleCardView: View {
 
   @AppStorage("openLinksInBackground") private var openInBackground = false
   @AppStorage("markReadOnOpen") private var markReadOnOpen = true
+  // Cluster A1 — card tap opens the in-app Reader by default (reversible).
+  @AppStorage("tapOpensReader") private var tapOpensReader = true
+
+  @State private var showReader = false
 
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
@@ -88,15 +85,16 @@ struct ArticleCardView: View {
       isHovering = hovering
     }
     #endif
-    // Open article on tap.
-    .onTapGesture { openArticle() }
+    // Open article on tap (Reader by default; browser if disabled).
+    .onTapGesture { handleTap() }
     // Drag-and-drop: drag the article URL.
     .draggable(article.link) {
       ArticleDragPreview(title: article.title, source: article.source)
     }
     // Enhanced context menu.
     .contextMenu {
-      Button("Open in Browser") { openArticle() }
+      Button("Open in Reader") { showReader = true }
+      Button("Open in Browser") { openInBrowser() }
 
       if let url = URL(string: article.link) {
         ShareLink("Share Article", item: url)
@@ -105,8 +103,7 @@ struct ArticleCardView: View {
       Divider()
 
       Button(article.isRead ? "Mark as Unread" : "Mark as Read") {
-        article.isRead.toggle()
-        modelContext.saveOrLog("toggle read from context menu")
+        ArticleOpener.toggleRead(article, context: modelContext)
       }
 
       Button {
@@ -121,9 +118,12 @@ struct ArticleCardView: View {
 
       Divider()
 
-      Button("Copy Link") { copyLink() }
-      Button("Copy Title") { copyTitle() }
-      Button("Copy Title & Link") { copyTitleAndLink() }
+      Button("Copy Link") { ArticleOpener.copyLink(article) }
+      Button("Copy Title") { ArticleOpener.copyTitle(article) }
+      Button("Copy Title & Link") { ArticleOpener.copyTitleAndLink(article) }
+    }
+    .sheet(isPresented: $showReader) {
+      ReaderView(article: article, colorHex: colorHex)
     }
   }
 
@@ -168,54 +168,23 @@ struct ArticleCardView: View {
 
   // MARK: - Helpers
 
-  private func openArticle() {
-    if markReadOnOpen {
-      article.isRead = true
-      // BUG_REPORT: Persist the "Read" state immediately to avoid data loss.
-      modelContext.saveOrLog("mark read on open")
-    }
-
-    if let url = URL(string: article.link) {
-      #if os(macOS)
-        // BUG_REPORT: Respect openLinksInBackground preference
-        if openInBackground {
-          let config = NSWorkspace.OpenConfiguration()
-          config.activates = false
-          NSWorkspace.shared.open(url, configuration: config)
-        } else {
-          NSWorkspace.shared.open(url)
-        }
-      #else
-        UIApplication.shared.open(url)
-      #endif
+  /// Card tap: open the in-app Reader (default) or fall back to the browser (cluster A1).
+  private func handleTap() {
+    if tapOpensReader {
+      showReader = true
+    } else {
+      openInBrowser()
     }
   }
 
-  private func copyLink() {
-    #if os(macOS)
-      NSPasteboard.general.clearContents()
-      NSPasteboard.general.setString(article.link, forType: .string)
-    #else
-      UIPasteboard.general.string = article.link
-    #endif
-  }
-
-  private func copyTitle() {
-    #if os(macOS)
-      NSPasteboard.general.clearContents()
-      NSPasteboard.general.setString(article.title, forType: .string)
-    #else
-      UIPasteboard.general.string = article.title
-    #endif
-  }
-
-  private func copyTitleAndLink() {
-    #if os(macOS)
-      NSPasteboard.general.clearContents()
-      NSPasteboard.general.setString("\(article.title)\n\(article.link)", forType: .string)
-    #else
-      UIPasteboard.general.string = "\(article.title)\n\(article.link)"
-    #endif
+  /// Opens the article in the external browser via the shared `ArticleOpener`.
+  private func openInBrowser() {
+    ArticleOpener.openInBrowser(
+      article,
+      markRead: markReadOnOpen,
+      inBackground: openInBackground,
+      context: modelContext
+    )
   }
 }
 

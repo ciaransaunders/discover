@@ -69,7 +69,11 @@ enum ArticleUpsertService {
                 category: item.category,
                 thumbnail: item.thumbnail,
                 publishedAt: item.pubDate ?? .now,
-                feedUrl: item.feedUrl.isEmpty ? nil : item.feedUrl
+                feedUrl: item.feedUrl.isEmpty ? nil : item.feedUrl,
+                // Cluster A1 — persist the full body (content:encoded / atom:content) so the
+                // in-app Reader has something richer than the snippet. nil when the feed
+                // provides no full content.
+                content: item.content.isEmpty ? nil : item.content
             )
             context.insert(article)
             newCount += 1

@@ -9,6 +9,10 @@ struct DiscoverApp: App {
     private let modelContainer: ModelContainer
     @State private var modelInitError: String?
 
+    /// Cluster A2/A3 — the Reader typography theme + explicit app appearance, created once and
+    /// injected via `.environment` so every view (incl. detached sheets) shares one instance.
+    @State private var theme = ReaderThemeManager()
+
     init() {
         let (container, errorMessage) = Self.makeModelContainer()
         self.modelContainer = container
@@ -35,8 +39,14 @@ struct DiscoverApp: App {
                 } message: {
                     Text(modelInitError ?? "")
                 }
+                // Inject the shared theme; apply the resolved (dark-only) appearance at the
+                // content root so sheets inherit it (cluster A3).
+                .environment(theme)
+                .preferredColorScheme(theme.resolvedColorScheme)
             #else
             ContentView()
+                .environment(theme)
+                .preferredColorScheme(theme.resolvedColorScheme)
             #endif
         }
         .modelContainer(modelContainer)

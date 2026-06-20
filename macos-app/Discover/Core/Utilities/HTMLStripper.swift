@@ -22,6 +22,14 @@ enum HTMLStripper {
         ("&ldquo;", "\u{201C}"), ("&rdquo;", "\u{201D}"),
     ]
 
+    /// Block-level tags whose boundaries become paragraph breaks in `paragraphs(_:)`.
+    /// Matches an opening *or* closing tag (optionally self-closed) for any of these
+    /// elements, case-insensitively, plus any attributes.
+    private static let blockBreakRegex: NSRegularExpression? = try? NSRegularExpression(
+        pattern: "</?(?:p|br|div|li|ul|ol|h[1-6]|blockquote|tr|table|section|article|figure|figcaption|pre|hr)\\b[^>]*>",
+        options: [.caseInsensitive]
+    )
+
     // MARK: - Public API
 
     /// Strips all HTML tags, decodes entities, and trims whitespace.
@@ -33,6 +41,29 @@ enum HTMLStripper {
         // Collapse repeated whitespace.
         while text.contains("  ") { text = text.replacingOccurrences(of: "  ", with: " ") }
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Splits RSS/Atom HTML into readable paragraphs for the in-app Reader (cluster A1).
+    ///
+    /// Block-level tags (`<p>`, `<br>`, `<div>`, `<li>`, headings, …) become paragraph
+    /// boundaries; remaining inline tags are stripped and entities decoded **per paragraph**.
+    /// Empty/whitespace-only paragraphs are dropped. Returns `[]` for empty input — never
+    /// indexes into a string, so it cannot crash on malformed markup.
+    static func paragraphs(_ html: String) -> [String] {
+        guard !html.isEmpty else { return [] }
+
+        // 1. Replace block-tag boundaries with a newline sentinel so we can split safely.
+        let sentinel = "\u{1}"  // not present in normal text
+        let nsRange = NSRange(html.startIndex..., in: html)
+        let broken = blockBreakRegex?.stringByReplacingMatches(
+            in: html, range: nsRange, withTemplate: sentinel
+        ) ?? html
+
+        // 2. Split, then strip + decode each chunk (reuses the single-string path).
+        return broken
+            .components(separatedBy: sentinel)
+            .map { strip($0) }
+            .filter { !$0.isEmpty }
     }
 
     // MARK: - Private
