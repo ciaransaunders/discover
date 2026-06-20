@@ -15,6 +15,10 @@ final class FeedManagerViewModel {
   var newCategorySlug = ""
   var newCategoryLabel = ""
   var newCategoryColor = "#6B7280"
+
+  // Folder form state (cluster C3).
+  var newFolderName = ""
+
   var errorMessage: String?
   var selectedTab = FeedManagerTab.feeds
 
@@ -23,7 +27,7 @@ final class FeedManagerViewModel {
   /// Search query applied (in-memory) to the feed list.
   var feedSearchText = ""
 
-  enum FeedManagerTab { case feeds, categories }
+  enum FeedManagerTab { case feeds, categories, folders }
 
   // MARK: - Feed CRUD
 
@@ -199,6 +203,91 @@ final class FeedManagerViewModel {
     } catch {
       errorMessage = error.localizedDescription
     }
+  }
+
+  // MARK: - Folder CRUD (cluster C3)
+
+  /// Creates a folder from `newFolderName`. The slug is derived from the name and must be unique,
+  /// mirroring the category uniqueness/priority pattern.
+  func addFolder(context: ModelContext) {
+    let name = newFolderName.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !name.isEmpty else {
+      errorMessage = "Folder name is required."
+      return
+    }
+    let slug = Self.folderSlug(from: name)
+    guard !slug.isEmpty else {
+      errorMessage = "Folder name must contain at least one letter or number."
+      return
+    }
+
+    do {
+      let existing = try context.fetch(FetchDescriptor<FolderModel>())
+      if existing.contains(where: { $0.slug == slug }) {
+        errorMessage = "A folder with this name already exists."
+        return
+      }
+
+      let priority = (existing.max(by: { $0.priority < $1.priority })?.priority ?? 0) + 1
+      let folder = FolderModel(slug: slug, name: name, feedUrls: [], priority: priority)
+      context.insert(folder)
+      try context.save()
+      newFolderName = ""
+    } catch {
+      errorMessage = error.localizedDescription
+    }
+  }
+
+  /// Renames a folder in place. The `slug` (and therefore membership/selection identity) is left
+  /// unchanged so an open selection keeps working.
+  func renameFolder(_ folder: FolderModel, to newName: String, context: ModelContext) {
+    let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmed.isEmpty else {
+      errorMessage = "Folder name is required."
+      return
+    }
+    folder.name = trimmed
+    do { try context.save() }
+    catch { errorMessage = error.localizedDescription }
+  }
+
+  func deleteFolder(_ folder: FolderModel, context: ModelContext) {
+    context.delete(folder)
+    do { try context.save() }
+    catch { errorMessage = error.localizedDescription }
+  }
+
+  /// Adds a feed URL to a folder (no duplicates).
+  func addFeed(_ feedUrl: String, to folder: FolderModel, context: ModelContext) {
+    guard !folder.feedUrls.contains(feedUrl) else { return }
+    folder.feedUrls.append(feedUrl)
+    do { try context.save() }
+    catch { errorMessage = error.localizedDescription }
+  }
+
+  /// Removes a feed URL from a folder.
+  func removeFeed(_ feedUrl: String, from folder: FolderModel, context: ModelContext) {
+    folder.feedUrls.removeAll { $0 == feedUrl }
+    do { try context.save() }
+    catch { errorMessage = error.localizedDescription }
+  }
+
+  /// Derives a URL-safe slug from a folder name (lowercased, spaces → hyphens, alphanumerics only).
+  static func folderSlug(from name: String) -> String {
+    let lowered = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    var slug = ""
+    var lastWasHyphen = false
+    for ch in lowered {
+      if ch.isLetter || ch.isNumber {
+        slug.append(ch)
+        lastWasHyphen = false
+      } else if !lastWasHyphen, !slug.isEmpty {
+        slug.append("-")
+        lastWasHyphen = true
+      }
+    }
+    while slug.hasSuffix("-") { slug.removeLast() }
+    return slug
   }
 
   // MARK: - Private

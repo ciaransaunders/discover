@@ -19,6 +19,14 @@ struct FeedManagerView: View {
 
   @Query(sort: \FeedModel.name) private var feeds: [FeedModel]
   @Query(sort: \CategoryModel.priority) private var categories: [CategoryModel]
+  @Query(sort: \FolderModel.priority) private var folders: [FolderModel]
+
+  /// Every unread article — one grouped fetch used to compute which feeds still have unread items
+  /// (cluster C2 "hide read feeds"), instead of a query per feed.
+  @Query(filter: #Predicate<ArticleModel> { !$0.isRead }) private var unreadArticles: [ArticleModel]
+
+  /// Cluster C2 — when on, feeds whose every article is read are hidden from the Feeds list.
+  @AppStorage("hideReadFeeds") private var hideReadFeeds = false
 
   var body: some View {
     NavigationStack {
@@ -27,6 +35,7 @@ struct FeedManagerView: View {
         Picker("", selection: $viewModel.selectedTab) {
           Text("Feeds").tag(FeedManagerViewModel.FeedManagerTab.feeds)
           Text("Categories").tag(FeedManagerViewModel.FeedManagerTab.categories)
+          Text("Folders").tag(FeedManagerViewModel.FeedManagerTab.folders)
         }
         .pickerStyle(.segmented)
         .padding()
@@ -36,6 +45,7 @@ struct FeedManagerView: View {
         switch viewModel.selectedTab {
         case .feeds: feedsTab
         case .categories: categoriesTab
+        case .folders: foldersTab
         }
       }
       .navigationTitle("Feed Manager")
@@ -96,7 +106,7 @@ struct FeedManagerView: View {
           .foregroundStyle(.secondary)
       }
 
-      // Search existing feeds (in-memory; cluster E3).
+      // Search existing feeds (in-memory; cluster E3) + hide-read-feeds toggle (cluster C2).
       Section {
         HStack(spacing: 6) {
           Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
@@ -111,14 +121,25 @@ struct FeedManagerView: View {
             .buttonStyle(.plain)
           }
         }
+        Toggle("Hide feeds with no unread articles", isOn: $hideReadFeeds)
       }
 
-      // Existing feeds grouped by category (search-filtered).
+      // The set of feed URLs that still have unread articles (single grouped pass).
+      let unreadFeedURLs = ArticleVisibilityFilter.feedURLsWithUnread(
+        unreadArticles.map { (feedUrl: $0.feedUrl, isRead: $0.isRead) }
+      )
+
+      // Existing feeds grouped by category (search-filtered, then hide-read filtered).
       let visibleFeeds = feeds.filter { feed in
-        FeedSearchMatcher.matches(
+        let matchesSearch = FeedSearchMatcher.matches(
           FeedSearchSubject(name: feed.name, url: feed.url, category: feed.category),
           query: viewModel.feedSearchText
         )
+        guard matchesSearch else { return false }
+        if hideReadFeeds {
+          return ArticleVisibilityFilter.feedHasUnread(feed.url, in: unreadFeedURLs)
+        }
+        return true
       }
       let grouped = Dictionary(grouping: visibleFeeds, by: { $0.category })
       let priorityBySlug = Dictionary(uniqueKeysWithValues: categories.map { ($0.slug, $0.priority) })
@@ -191,6 +212,57 @@ struct FeedManagerView: View {
       }
     }
   }
+
+  // MARK: - Folders Tab (cluster C3)
+
+  private var foldersTab: some View {
+    List {
+      // Add-folder form.
+      Section("Add Folder") {
+        TextField("Folder name (e.g. Morning Reads)", text: $viewModel.newFolderName)
+          .textFieldStyle(.plain)
+          .onSubmit { viewModel.addFolder(context: modelContext) }
+        Button("Add Folder") {
+          viewModel.addFolder(context: modelContext)
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(viewModel.newFolderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        Text("Folders group feeds for the sidebar. A feed can sit in any number of folders and keeps its category.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+      }
+
+      if folders.isEmpty {
+        Section {
+          Text("No folders yet. Create one above to group your feeds.")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+      } else {
+        Section("Folders") {
+          ForEach(folders) { folder in
+            FolderRowView(
+              folder: folder,
+              allFeeds: feeds,
+              onRename: { newName in
+                viewModel.renameFolder(folder, to: newName, context: modelContext)
+              },
+              onDelete: {
+                viewModel.deleteFolder(folder, context: modelContext)
+              },
+              onToggleMembership: { feed in
+                if folder.feedUrls.contains(feed.url) {
+                  viewModel.removeFeed(feed.url, from: folder, context: modelContext)
+                } else {
+                  viewModel.addFeed(feed.url, to: folder, context: modelContext)
+                }
+              }
+            )
+          }
+        }
+      }
+    }
+  }
 }
 
 // MARK: - Feed Row
@@ -239,6 +311,85 @@ private struct FeedRowView: View {
       }
       .buttonStyle(.plain)
     }
+  }
+}
+
+// MARK: - Folder Row (cluster C3)
+
+/// One folder row: shows name + member count, with a disclosure listing every feed as a toggle to
+/// add/remove it, plus rename + delete affordances.
+private struct FolderRowView: View {
+  @Bindable var folder: FolderModel
+  let allFeeds: [FeedModel]
+  let onRename: (String) -> Void
+  let onDelete: () -> Void
+  let onToggleMembership: (FeedModel) -> Void
+
+  @State private var isEditingName = false
+  @State private var draftName = ""
+
+  var body: some View {
+    DisclosureGroup {
+      if allFeeds.isEmpty {
+        Text("No feeds to add yet.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+      } else {
+        ForEach(allFeeds) { feed in
+          Button {
+            onToggleMembership(feed)
+          } label: {
+            HStack(spacing: 8) {
+              Image(systemName: folder.feedUrls.contains(feed.url) ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(folder.feedUrls.contains(feed.url) ? Color.accentColor : Color.secondary)
+              FaviconImage(urlString: feed.url)
+              Text(feed.name).font(.body)
+              Spacer()
+            }
+          }
+          .buttonStyle(.plain)
+        }
+      }
+    } label: {
+      HStack {
+        Image(systemName: folder.iconSystemName)
+          .foregroundStyle(.secondary)
+        if isEditingName {
+          TextField("Folder name", text: $draftName)
+            .textFieldStyle(.roundedBorder)
+            .onSubmit { commitRename() }
+        } else {
+          Text(folder.name)
+          Text("\(folder.feedUrls.count) feed\(folder.feedUrls.count == 1 ? "" : "s")")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        Spacer()
+        if isEditingName {
+          Button("Save") { commitRename() }
+            .buttonStyle(.plain)
+        } else {
+          Button {
+            draftName = folder.name
+            isEditingName = true
+          } label: {
+            Image(systemName: "pencil")
+          }
+          .buttonStyle(.plain)
+        }
+        Button(role: .destructive) {
+          onDelete()
+        } label: {
+          Image(systemName: "trash")
+        }
+        .buttonStyle(.plain)
+      }
+    }
+  }
+
+  private func commitRename() {
+    onRename(draftName)
+    isEditingName = false
   }
 }
 

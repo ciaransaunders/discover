@@ -41,6 +41,13 @@ struct ArticleCardView: View {
           }
 
           Spacer(minLength: 0)
+
+          if article.isStarred {
+            Image(systemName: "star.fill")
+              .font(.caption)
+              .foregroundStyle(.yellow)
+              .accessibilityLabel("Starred")
+          }
         }
 
         Text(article.title)
@@ -100,6 +107,16 @@ struct ArticleCardView: View {
       Button(article.isRead ? "Mark as Unread" : "Mark as Read") {
         article.isRead.toggle()
         modelContext.saveOrLog("toggle read from context menu")
+      }
+
+      Button {
+        article.isStarred.toggle()
+        modelContext.saveOrLog("toggle starred from context menu")
+      } label: {
+        Label(
+          article.isStarred ? "Unstar" : "Star",
+          systemImage: article.isStarred ? "star.fill" : "star"
+        )
       }
 
       Divider()

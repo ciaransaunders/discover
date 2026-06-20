@@ -12,6 +12,9 @@ struct PreferencesView: View {
   @AppStorage("openLinksInBackground") private var openInBackground = false
   @AppStorage("markReadOnOpen") private var markReadOnOpen = true
   @AppStorage("notifyOnNewArticles") private var notifyOnNewArticles = false
+  // Cluster C2 — hide read articles/feeds (view-layer only).
+  @AppStorage("hideReadArticles") private var hideReadArticles = false
+  @AppStorage("hideReadFeeds") private var hideReadFeeds = false
 
   var body: some View {
     NavigationStack {
@@ -47,6 +50,15 @@ struct PreferencesView: View {
         Section("Reading") {
           Toggle("Mark articles as read when opened", isOn: $markReadOnOpen)
           Toggle("Open links in background", isOn: $openInBackground)
+        }
+
+        // MARK: - Organisation (cluster C2)
+        Section("Organisation") {
+          Toggle("Hide read articles", isOn: $hideReadArticles)
+          Toggle("Hide feeds with no unread articles", isOn: $hideReadFeeds)
+          Text("Hidden read items can be shown again any time from the toolbar or these toggles.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
         }
 
         // MARK: - Keyboard Shortcuts Reference

@@ -8,7 +8,7 @@ struct ContentView: View {
 
     @Environment(\.modelContext) private var modelContext
 
-    @State private var selectedCategory: String? = nil
+    @State private var selection: SidebarSelection = .all
 
     /// App-lifetime background refresh scheduler (cluster E2). Owns the single long-lived refresh
     /// loop, started from the top-level `.task` below — replaces the old view-scoped loop in
@@ -42,9 +42,12 @@ struct ContentView: View {
     private var content: some View {
         #if os(macOS)
         NavigationSplitView {
-            CategorySidebarView(selectedCategory: $selectedCategory)
+            CategorySidebarView(selection: $selection)
         } detail: {
-            ArticleListView(selectedCategory: selectedCategory)
+            ArticleListView(selection: selection)
+                // Force the detail column to rebuild its dynamic @Query when the selection
+                // changes (the predicate is built in init, not derived reactively).
+                .id(selection)
         }
         #else
         iOSLayout
@@ -61,9 +64,10 @@ struct ContentView: View {
             if horizontalSizeClass == .regular {
                 // iPad: use NavigationSplitView (sidebar + detail)
                 NavigationSplitView {
-                    CategorySidebarView(selectedCategory: $selectedCategory)
+                    CategorySidebarView(selection: $selection)
                 } detail: {
-                    ArticleListView(selectedCategory: selectedCategory)
+                    ArticleListView(selection: selection)
+                        .id(selection)
                 }
             } else {
                 // iPhone: use TabView-based navigation
@@ -76,20 +80,19 @@ struct ContentView: View {
         TabView {
             Tab("All News", systemImage: "newspaper.fill") {
                 NavigationStack {
-                    ArticleListView(selectedCategory: nil)
+                    ArticleListView(selection: .all)
                 }
             }
             Tab("Categories", systemImage: "square.grid.2x2.fill") {
                 NavigationStack {
                     // BUG_REPORT: Fixed broken iOS navigation by using navigationDestination instead of conditional rendering.
-                    CategorySidebarView(selectedCategory: $selectedCategory)
+                    CategorySidebarView(selection: $selection)
                         .navigationDestination(isPresented: Binding(
-                            get: { selectedCategory != nil },
-                            set: { if !$0 { selectedCategory = nil } }
+                            get: { selection != .all },
+                            set: { if !$0 { selection = .all } }
                         )) {
-                            if let category = selectedCategory {
-                                ArticleListView(selectedCategory: category)
-                            }
+                            ArticleListView(selection: selection)
+                                .id(selection)
                         }
                 }
             }

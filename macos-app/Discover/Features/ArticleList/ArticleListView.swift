@@ -8,7 +8,7 @@ struct ArticleListView: View {
 
     // MARK: - Inputs
 
-    let selectedCategory: String?
+    let selection: SidebarSelection
 
     // MARK: - Environment
 
@@ -17,6 +17,8 @@ struct ArticleListView: View {
     // MARK: - State
 
     @AppStorage("recentSearches") private var recentSearchesJSON: String = "[]"
+    /// Cluster C2 — hide already-read articles from the list (view-layer only, no schema).
+    @AppStorage("hideReadArticles") private var hideReadArticles = false
 
     @State private var viewModel   = ArticleListViewModel()
     @State private var showFeedMgr = false
@@ -26,7 +28,7 @@ struct ArticleListView: View {
     @State private var searchScope: ArticleSearchScope = .all
     @State private var setupErrorMessage: String?
 
-    // MARK: - Data (dynamic @Query predicate from selectedCategory)
+    // MARK: - Data (dynamic @Query predicate from the SidebarSelection)
 
     @Query private var articles: [ArticleModel]
 
@@ -36,20 +38,43 @@ struct ArticleListView: View {
     /// Enabled feeds and their `lastError` values are used to show offline/failed UI.
     @Query(sort: \FeedModel.name) private var feeds: [FeedModel]
 
+    /// Folders — used to resolve the nav title for a `.folder` selection to its stored name.
+    @Query(sort: \FolderModel.priority) private var folders: [FolderModel]
+
     // Grid layout: adaptive columns, minimum 280 pt wide.
     private let columns = [GridItem(.adaptive(minimum: 280, maximum: 380), spacing: 16)]
 
-    // MARK: - Init (dynamic @Query predicate)
+    /// For `.folder`, the resolved member feed URLs (carried in the selection). The folder query is
+    /// unfiltered (OQ-2) and membership is applied in-memory in `displayedArticles` from these.
+    private let folderFeedUrls: [String]
 
-    init(selectedCategory: String?) {
-        self.selectedCategory = selectedCategory
+    // MARK: - Init (dynamic @Query predicate per selection)
+
+    init(selection: SidebarSelection) {
+        self.selection = selection
         let sort = [SortDescriptor(\ArticleModel.publishedAt, order: .reverse)]
-        if let cat = selectedCategory {
-            _articles = Query(
-                filter: #Predicate<ArticleModel> { $0.category == cat },
-                sort: sort
-            )
-        } else {
+
+        switch selection {
+        case .all:
+            self.folderFeedUrls = []
+            _articles = Query(sort: sort)
+        case .allUnread:
+            self.folderFeedUrls = []
+            _articles = Query(filter: SmartFeedPredicates.unread(), sort: sort)
+        case .today:
+            // Capture the Date in a `let` BEFORE the macro (same pattern as purgeOldArticles).
+            self.folderFeedUrls = []
+            _articles = Query(filter: SmartFeedPredicates.today(), sort: sort)
+        case .starred:
+            self.folderFeedUrls = []
+            _articles = Query(filter: SmartFeedPredicates.starred(), sort: sort)
+        case .category(let slug):
+            self.folderFeedUrls = []
+            _articles = Query(filter: SmartFeedPredicates.category(slug), sort: sort)
+        case .folder(_, let feedUrls):
+            // OQ-2: the folder `#Predicate` (Array.contains + optional-coalescing) throws at fetch
+            // time, so the query is unfiltered and membership is applied in `displayedArticles`.
+            self.folderFeedUrls = feedUrls
             _articles = Query(sort: sort)
         }
     }
@@ -61,11 +86,37 @@ struct ArticleListView: View {
         Dictionary(uniqueKeysWithValues: allCategories.map { ($0.slug, $0.colorHex) })
     }
 
-    /// Articles filtered by the debounced search query + scope (in-memory, post-@Query).
+    /// The category slug the active selection scopes to, for the "This Category" search scope.
+    /// Smart feeds and folders are not category-scoped, so this is `nil` there.
+    private var scopedCategory: String? {
+        if case .category(let slug) = selection { return slug }
+        return nil
+    }
+
+    /// Articles for display: `@Query` results filtered (in order) by the debounced search query +
+    /// scope, then the defensive folder-membership fallback, then the "hide read" preference.
     ///
-    /// Uses the pure `ArticleSearchMatcher` so behaviour is shared with the test suite. An empty
-    /// query under the `.all` scope short-circuits to the unfiltered list.
+    /// Uses the pure `ArticleSearchMatcher` (cluster E) and `ArticleVisibilityFilter` (cluster C2)
+    /// so all three behaviours are unit-tested. Each stage composes with the previous one.
     private var displayedArticles: [ArticleModel] {
+        var result = searchFilteredArticles
+
+        // Folder membership (FEATURE_PLAN OQ-2): resolved in memory because the SwiftData
+        // `#Predicate` form throws at fetch time. Shares the pure `articleIsInFolder` rule.
+        if case .folder = selection {
+            let allowed = Set(folderFeedUrls)
+            result = result.filter { SmartFeedPredicates.articleIsInFolder($0, feedUrls: allowed) }
+        }
+
+        // Cluster C2 — drop read articles when "Hide read" is on.
+        result = ArticleVisibilityFilter.visible(result, hideRead: hideReadArticles) { $0.isRead }
+
+        return result
+    }
+
+    /// The `@Query` results filtered by the debounced search query + scope (in-memory).
+    /// An empty query under the `.all` scope short-circuits to the unfiltered list.
+    private var searchFilteredArticles: [ArticleModel] {
         let trimmed = committedSearch.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty, searchScope == .all { return articles }
         return articles.filter { article in
@@ -79,7 +130,7 @@ struct ArticleListView: View {
                 ),
                 query: committedSearch,
                 scope: searchScope,
-                selectedCategory: selectedCategory
+                selectedCategory: scopedCategory
             )
         }
     }
@@ -147,6 +198,17 @@ struct ArticleListView: View {
         .navigationTitle(navTitle)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
+                // Hide-read quick toggle (cluster C2).
+                Button {
+                    hideReadArticles.toggle()
+                } label: {
+                    Label(
+                        hideReadArticles ? "Show Read" : "Hide Read",
+                        systemImage: hideReadArticles ? "eye.slash.fill" : "eye.slash"
+                    )
+                }
+                .help(hideReadArticles ? "Show read articles" : "Hide read articles")
+
                 // Mark All Read button
                 Button {
                     markAllRead()
@@ -359,7 +421,14 @@ struct ArticleListView: View {
 
     // MARK: - Helpers
 
+    /// Navigation title for the active selection. Prefers the stored `CategoryModel.label` /
+    /// `FolderModel.name`, falling back to `SidebarSelection.title` (capitalised slug / fixed name).
     private var navTitle: String {
-        selectedCategory.map { $0.capitalized } ?? "All News"
+        let categoryLabels = Dictionary(uniqueKeysWithValues: allCategories.map { ($0.slug, $0.label) })
+        let folderNames = Dictionary(uniqueKeysWithValues: folders.map { ($0.slug, $0.name) })
+        return selection.resolvedTitle(
+            categoryLabel: { categoryLabels[$0] },
+            folderName: { folderNames[$0] }
+        )
     }
 }
