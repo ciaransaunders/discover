@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" 
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Namespace Test Feed</title>
+    <item>
+      <title>Article with Encoded Content</title>
+      <link>https://example.com/encoded</link>
+      <guid isPermaLink="false">encoded-1</guid>
+      <pubDate>Wed, 16 Apr 2026 12:00:00 +0000</pubDate>
+      <description>Short summary.</description>
+      <content:encoded><![CDATA[<p>This is the full <b>encoded</b> content.</p>]]></content:encoded>
+      <media:thumbnail url="https://example.com/thumb.jpg" width="100" height="100" />
+      <dc:creator>John Doe</dc:creator>
+    </item>
+  </channel>
+</rss>

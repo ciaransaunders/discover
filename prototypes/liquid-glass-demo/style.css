@@ -1,0 +1,338 @@
+:root {
+  /* Colors */
+  --color-bg-primary: #1a1b26;
+  --color-text-main: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.7);
+  --color-accent: #7aa2f7;
+  
+  /* Glass Variables */
+  --glass-fill: rgba(255, 255, 255, 0.03); /* Near-invisible baseline fill */
+  --glass-tint-warning: rgba(224, 175, 104, 0.08); /* 8% semantic wash */
+  --glass-tint-success: rgba(158, 206, 106, 0.08);
+  --glass-tint-error: rgba(247, 118, 142, 0.08);
+  
+  /* Glass Refraction (Lensing) */
+  --glass-blur-thin: blur(12px) saturate(140%);
+  --glass-blur-medium: blur(20px) saturate(160%);
+  --glass-blur-thick: blur(32px) saturate(180%);
+
+  /* Specular Highlights (Top edge) & Outer Shadows */
+  /* Thin has a small shadow, Thick has a deep shadow */
+  --glass-shadow-thin: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.15), /* Hairline specular top */
+    0 4px 6px rgba(0, 0, 0, 0.1);            /* Soft outer shadow */
+    
+  --glass-shadow-medium: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2), 
+    0 10px 15px rgba(0, 0, 0, 0.2);
+    
+  --glass-shadow-thick: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.25), 
+    0 20px 25px rgba(0, 0, 0, 0.3);
+    
+  /* Elastic Motion / Bouncy Transitions */
+  --glass-transition-elastic: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --glass-transition-smooth: all 0.3s ease-out;
+}
+
+/* Accessibility Modes (Global Flags applied to body) */
+body[data-a11y="reduced-transparency"] {
+  --glass-fill: rgba(255, 255, 255, 0.15); /* Frosted surface */
+  --glass-blur-thin: blur(4px);
+  --glass-blur-medium: blur(8px);
+  --glass-blur-thick: blur(12px);
+}
+
+body[data-a11y="high-contrast"] {
+  --glass-fill: rgba(255, 255, 255, 1); /* Near opaque light/dark depending on theme */
+  --color-text-main: #000;
+  --glass-blur-thin: none;
+  --glass-blur-medium: none;
+  --glass-blur-thick: none;
+  /* Strong border, no subtle shadow */
+  --glass-shadow-thin: 0 0 0 2px #000;
+  --glass-shadow-medium: 0 0 0 2px #000;
+  --glass-shadow-thick: 0 0 0 2px #000;
+  --glass-transition-elastic: none; /* No motion effects */
+  --glass-transition-smooth: none;
+}
+
+/* Reset & Base HTML Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Complex animated background to demonstrate refraction */
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+  background-size: 200% 200%;
+  animation: gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* --- Core components & utility classes go here --- */
+
+/* ====== Typography on Glass ====== */
+/* "Use heavier weights than you normally would — medium or semibold as a minimum" */
+/* "Prefer dynamic text shadows or vibrancy rendering over flat colour" */
+.glass-text {
+  font-weight: 600; /* Semibold Minimum */
+  color: var(--color-text-main);
+  /* A dark drop shadow helps the text pop against bright/unpredictable backgrounds bleeding through */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Base Glass Material Rule */
+.glass-surface {
+  background-color: var(--glass-fill);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden; /* For inner clipping if needed, though refraction applies to the bounds */
+  /* Remove borders entirely! "Never add a hard border to a glass element" */
+  border: none;
+}
+
+/* === Hierarchy (Depth via Thickness) === */
+
+.glass-thin {
+  background-color: var(--glass-fill);
+  backdrop-filter: var(--glass-blur-thin);
+  -webkit-backdrop-filter: var(--glass-blur-thin);
+  box-shadow: var(--glass-shadow-thin);
+  border-radius: 8px; /* Thinner items sit closer, tight radius */
+}
+
+.glass-medium {
+  background-color: var(--glass-fill);
+  backdrop-filter: var(--glass-blur-medium);
+  -webkit-backdrop-filter: var(--glass-blur-medium);
+  box-shadow: var(--glass-shadow-medium);
+  border-radius: 16px;
+}
+
+.glass-thick {
+  /* "slightly reducing its transparency for thicker elements" */
+  background-color: rgba(255, 255, 255, 0.05); /* slightly higher than base 0.03 */
+  backdrop-filter: var(--glass-blur-thick);
+  -webkit-backdrop-filter: var(--glass-blur-thick);
+  box-shadow: var(--glass-shadow-thick);
+  border-radius: 24px;
+}
+
+/* Semantic Tints (Very low opacity washes) */
+.tint-warning {
+  background-color: var(--glass-tint-warning);
+}
+.tint-success {
+  background-color: var(--glass-tint-success);
+}
+.tint-error {
+  background-color: var(--glass-tint-error);
+}
+
+/* ===== Layout & Demo Specifics ===== */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative; /* Above backgrounds */
+  z-index: 10;
+  gap: 40px;
+}
+
+.header {
+  text-align: center;
+}
+.header h1 {
+  font-size: 3rem;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.controls-bar {
+  padding: 20px 32px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.glass-input {
+  /* Minimal glass look for nested input controls */
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); /* Slight border allowed strictly for a11y focus rings on inputs if necessary, though Liquid Glass says no hard borders. We use a hairline inner shadow instead */
+  border: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.05);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: var(--glass-transition-smooth);
+}
+.glass-input:focus {
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), inset 0 0 0 2px var(--color-accent);
+}
+.glass-input option {
+  background-color: var(--color-bg-primary); /* Dark fallback for dropdown menu */
+  color: white;
+}
+
+.playground {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  width: 100%;
+}
+
+/* ===== Interactive Elements ===== */
+
+/* Glass Button (Thin) */
+.glass-button {
+  border: none;
+  padding: 12px 24px;
+  color: var(--color-text-main);
+  font-weight: 600;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  cursor: pointer;
+  transition: var(--glass-transition-elastic); /* Bouncy hover */
+}
+.glass-button:hover {
+  /* Pushing off the surface slightly */
+  transform: translateY(-2px) scale(1.02);
+  /* The shadow gets deeper/softer on hover */
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.3), 
+    0 8px 12px rgba(0, 0, 0, 0.15); 
+}
+.glass-button:active {
+  /* Squishing down */
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.1), 
+    0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+/* Glass Card */
+.glass-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.glass-card h2 {
+  font-size: 1.5rem;
+}
+
+/* Glass Panel (Expandable) */
+.glass-panel {
+  padding: 24px;
+  cursor: pointer;
+  /* Define origin for expanding "outward from a condensed point" */
+  transform-origin: center center;
+  transition: var(--glass-transition-elastic);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 120px; /* Condensed state */
+}
+
+/* "stretching and thickening, with shadow and refraction intensifying as it expands" */
+.glass-panel.expanded {
+  cursor: default;
+  /* Stretches to a larger form */
+  transform: scale(1.05);
+  /* Intense shadow for expanded state */
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.3), 
+    0 30px 40px rgba(0, 0, 0, 0.4);
+  /* Technically a real implementation would morph from glass-medium to glass-thick here via javascript class toggle, 
+     but we simulate the visual stretch here */
+  backdrop-filter: var(--glass-blur-thick);
+  -webkit-backdrop-filter: var(--glass-blur-thick);
+}
+
+.panel-content {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.1); /* A soft divider, not a hard border */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* Dissolve animation handling */
+  opacity: 1;
+  transition: opacity 0.4s ease-out;
+}
+
+.panel-content.hidden {
+  display: none;
+  opacity: 0;
+}
+
+/* Background Animated Orbs to Test Refraction */
+.background-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 1;
+  opacity: 0.6;
+}
+
+.orb-1 {
+  width: 400px;
+  height: 400px;
+  background: #ff007f;
+  top: 20%;
+  left: 10%;
+  animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: #00f0ff;
+  bottom: 10%;
+  right: 5%;
+  animation: float 25s infinite alternate-reverse cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(100px, 150px) scale(1.2); }
+  100% { transform: translate(-50px, -100px) scale(0.9); }
+}
+

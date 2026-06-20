@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Glass Design System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-a11y="default">
+
+  <!-- A dynamic background element to prove the glass works as content moves -->
+  <div class="background-orb orb-1"></div>
+  <div class="background-orb orb-2"></div>
+
+  <main class="container">
+    <header class="header">
+      <h1 class="glass-text">Liquid Glass</h1>
+      <p class="subtitle glass-text">A physically present, dynamic material system.</p>
+    </header>
+
+    <div class="controls-bar glass-surface glass-medium">
+      <div class="control-group">
+        <label for="a11y-select" class="glass-text">Accessibility Mode:</label>
+        <select id="a11y-select" class="glass-input">
+          <option value="default">Default</option>
+          <option value="reduced-transparency">Reduced Transparency</option>
+          <option value="high-contrast">High Contrast</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Playground for glass components -->
+    <section class="playground">
+
+      <!-- Thin glass button -->
+      <button class="glass-button glass-thin">Click Me</button>
+      
+      <!-- Semantic tinted glass -->
+      <div class="glass-card glass-medium tint-warning">
+        <h2 class="glass-text">Warning State</h2>
+        <p class="glass-text">Shows 8% semantic wash.</p>
+      </div>
+
+      <!-- Expandable thick glass panel -->
+      <div class="glass-panel glass-thick expandable">
+        <h2 class="glass-text">Expandable Menu</h2>
+        <p class="glass-text">Click to demonstrate elastic material transitions.</p>
+        <div class="panel-content hidden">
+          <p class="glass-text">The glass expanded outwards, stretching the refraction and shadows.</p>
+          <button class="glass-button glass-thin" id="close-panel">Contract</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

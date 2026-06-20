@@ -1,0 +1,718 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		91AA013A2F547FB300C5D32F /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AA01392F547FB300C5D32F /* PreferencesView.swift */; };
+		AA000001000000000000001A /* DiscoverApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000001A /* DiscoverApp.swift */; };
+		AA000001000000000000001B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000001B /* ContentView.swift */; };
+		AA000001000000000000001C /* CategorySidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000001C /* CategorySidebarView.swift */; };
+		AA000001000000000000001D /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000001D /* ArticleListView.swift */; };
+		AA000001000000000000001E /* ArticleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000001E /* ArticleModel.swift */; };
+		AA000001000000000000001F /* FeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000001F /* FeedModel.swift */; };
+		AA000001000000000000002A /* CategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000002A /* CategoryModel.swift */; };
+		AA000001000000000000002B /* DefaultFeeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000002B /* DefaultFeeds.swift */; };
+		AA000001000000000000002C /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000002C /* Color+Hex.swift */; };
+		AA000001000000000000002D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000002D /* Assets.xcassets */; };
+		AA000001000000000000002E /* DiscoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000003C /* DiscoverTests.swift */; };
+		AA0000010000000000000102 /* rss_sample.xml in Resources */ = {isa = PBXBuildFile; fileRef = BB0000010000000000000102 /* rss_sample.xml */; };
+		AA0000010000000000000103 /* atom_sample.xml in Resources */ = {isa = PBXBuildFile; fileRef = BB0000010000000000000103 /* atom_sample.xml */; };
+		AA0000010000000000000106 /* namespaces_sample.xml in Resources */ = {isa = PBXBuildFile; fileRef = BB0000010000000000000106 /* namespaces_sample.xml */; };
+		AA0000010000000000000107 /* youtube_sample.xml in Resources */ = {isa = PBXBuildFile; fileRef = BB0000010000000000000107 /* youtube_sample.xml */; };
+		AA0000010000000000000104 /* ModelContext+Save.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000010000000000000104 /* ModelContext+Save.swift */; };
+		AA0000010000000000000105 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000010000000000000105 /* AppLogger.swift */; };
+		AA000001000000000000003D /* URLNormaliser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000003D /* URLNormaliser.swift */; };
+		AA000001000000000000003E /* HTMLStripper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000003E /* HTMLStripper.swift */; };
+		AA000001000000000000003F /* SnippetTruncator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000003F /* SnippetTruncator.swift */; };
+		AA000001000000000000004A /* IDGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000004A /* IDGenerator.swift */; };
+		AA000001000000000000004B /* RSSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000004B /* RSSParser.swift */; };
+		AA000001000000000000004C /* ThumbnailExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000004C /* ThumbnailExtractor.swift */; };
+		AA000001000000000000004D /* OGImageActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000004D /* OGImageActor.swift */; };
+		AA000001000000000000004E /* RSSFetcherActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000004E /* RSSFetcherActor.swift */; };
+		AA000001000000000000004F /* ArticleListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000004F /* ArticleListViewModel.swift */; };
+		AA000001000000000000005A /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000005A /* GlassCard.swift */; };
+		AA000001000000000000005B /* CategoryBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000005B /* CategoryBadge.swift */; };
+		AA000001000000000000005C /* FaviconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000005C /* FaviconImage.swift */; };
+		AA000001000000000000005D /* TimeAgoText.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000005D /* TimeAgoText.swift */; };
+		AA000001000000000000005E /* ArticleCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000005E /* ArticleCardView.swift */; };
+		AA000001000000000000005F /* HeroCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000005F /* HeroCardView.swift */; };
+		AA000001000000000000006A /* FeedManagerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000006A /* FeedManagerViewModel.swift */; };
+		AA000001000000000000006B /* FeedManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001000000000000006B /* FeedManagerView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		GG000001000000000000001A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FF000001000000000000003A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE000001000000000000001A;
+			remoteInfo = Discover;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		91AA01392F547FB300C5D32F /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		BB000001000000000000001A /* DiscoverApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverApp.swift; sourceTree = "<group>"; };
+		BB000001000000000000001B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BB000001000000000000001C /* CategorySidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySidebarView.swift; sourceTree = "<group>"; };
+		BB000001000000000000001D /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
+		BB000001000000000000001E /* ArticleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleModel.swift; sourceTree = "<group>"; };
+		BB000001000000000000001F /* FeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedModel.swift; sourceTree = "<group>"; };
+		BB000001000000000000002A /* CategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryModel.swift; sourceTree = "<group>"; };
+		BB000001000000000000002B /* DefaultFeeds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultFeeds.swift; sourceTree = "<group>"; };
+		BB000001000000000000002C /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		BB000001000000000000002D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BB000001000000000000002E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BB000001000000000000002F /* Discover.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Discover.entitlements; sourceTree = "<group>"; };
+		BB000001000000000000003A /* Discover.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Discover.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB000001000000000000003B /* DiscoverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiscoverTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB000001000000000000003C /* DiscoverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverTests.swift; sourceTree = "<group>"; };
+		BB0000010000000000000102 /* rss_sample.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = rss_sample.xml; sourceTree = "<group>"; };
+		BB0000010000000000000103 /* atom_sample.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = atom_sample.xml; sourceTree = "<group>"; };
+		BB0000010000000000000106 /* namespaces_sample.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = namespaces_sample.xml; sourceTree = "<group>"; };
+		BB0000010000000000000107 /* youtube_sample.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = youtube_sample.xml; sourceTree = "<group>"; };
+		BB0000010000000000000104 /* ModelContext+Save.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelContext+Save.swift"; sourceTree = "<group>"; };
+		BB0000010000000000000105 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
+		BB000001000000000000003D /* URLNormaliser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLNormaliser.swift; sourceTree = "<group>"; };
+		BB000001000000000000003E /* HTMLStripper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLStripper.swift; sourceTree = "<group>"; };
+		BB000001000000000000003F /* SnippetTruncator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetTruncator.swift; sourceTree = "<group>"; };
+		BB000001000000000000004A /* IDGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDGenerator.swift; sourceTree = "<group>"; };
+		BB000001000000000000004B /* RSSParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSParser.swift; sourceTree = "<group>"; };
+		BB000001000000000000004C /* ThumbnailExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailExtractor.swift; sourceTree = "<group>"; };
+		BB000001000000000000004D /* OGImageActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OGImageActor.swift; sourceTree = "<group>"; };
+		BB000001000000000000004E /* RSSFetcherActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSFetcherActor.swift; sourceTree = "<group>"; };
+		BB000001000000000000004F /* ArticleListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListViewModel.swift; sourceTree = "<group>"; };
+		BB000001000000000000005A /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		BB000001000000000000005B /* CategoryBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryBadge.swift; sourceTree = "<group>"; };
+		BB000001000000000000005C /* FaviconImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconImage.swift; sourceTree = "<group>"; };
+		BB000001000000000000005D /* TimeAgoText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeAgoText.swift; sourceTree = "<group>"; };
+		BB000001000000000000005E /* ArticleCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCardView.swift; sourceTree = "<group>"; };
+		BB000001000000000000005F /* HeroCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroCardView.swift; sourceTree = "<group>"; };
+		BB000001000000000000006A /* FeedManagerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedManagerViewModel.swift; sourceTree = "<group>"; };
+		BB000001000000000000006B /* FeedManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedManagerView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CC000001000000000000001B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC000001000000000000001E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		91AA01382F547FAC00C5D32F /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				91AA01392F547FB300C5D32F /* PreferencesView.swift */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
+		DD0000010000000000000101 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				BB0000010000000000000103 /* atom_sample.xml */,
+				BB0000010000000000000102 /* rss_sample.xml */,
+				BB0000010000000000000106 /* namespaces_sample.xml */,
+				BB0000010000000000000107 /* youtube_sample.xml */,
+			);
+			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000001A = {
+			isa = PBXGroup;
+			children = (
+				DD000001000000000000001C /* Discover */,
+				DD000001000000000000003B /* DiscoverTests */,
+				DD000001000000000000001B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DD000001000000000000001B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000003A /* Discover.app */,
+				BB000001000000000000003B /* DiscoverTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000001C /* Discover */ = {
+			isa = PBXGroup;
+			children = (
+				DD000001000000000000001D /* App */,
+				DD000001000000000000001E /* Features */,
+				DD000001000000000000002B /* Core */,
+				DD000001000000000000002D /* Data */,
+				DD000001000000000000002E /* UI */,
+				DD000001000000000000003A /* Resources */,
+			);
+			path = Discover;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000001D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000001A /* DiscoverApp.swift */,
+				BB000001000000000000001B /* ContentView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000001E /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				DD000001000000000000001F /* CategorySidebar */,
+				DD000001000000000000002A /* ArticleList */,
+				DD000001000000000000003F /* ArticleCard */,
+				DD000001000000000000004A /* FeedManager */,
+				91AA01382F547FAC00C5D32F /* Preferences */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000001F /* CategorySidebar */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000001C /* CategorySidebarView.swift */,
+			);
+			path = CategorySidebar;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000002A /* ArticleList */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000001D /* ArticleListView.swift */,
+				BB000001000000000000004F /* ArticleListViewModel.swift */,
+			);
+			path = ArticleList;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000002B /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				DD000001000000000000002C /* Models */,
+				DD000001000000000000003C /* Utilities */,
+				DD000001000000000000003D /* Parsing */,
+				DD000001000000000000003E /* Services */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000002C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000001E /* ArticleModel.swift */,
+				BB000001000000000000001F /* FeedModel.swift */,
+				BB000001000000000000002A /* CategoryModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000002D /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000002B /* DefaultFeeds.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000002E /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				DD000001000000000000002F /* Extensions */,
+				DD000001000000000000004B /* Components */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000002F /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000002C /* Color+Hex.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000003A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000002D /* Assets.xcassets */,
+				BB000001000000000000002E /* Info.plist */,
+				BB000001000000000000002F /* Discover.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000003B /* DiscoverTests */ = {
+			isa = PBXGroup;
+			children = (
+				DD0000010000000000000101 /* Fixtures */,
+				BB000001000000000000003C /* DiscoverTests.swift */,
+			);
+			path = DiscoverTests;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000003C /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000003D /* URLNormaliser.swift */,
+				BB000001000000000000003E /* HTMLStripper.swift */,
+				BB000001000000000000003F /* SnippetTruncator.swift */,
+				BB000001000000000000004A /* IDGenerator.swift */,
+				BB0000010000000000000104 /* ModelContext+Save.swift */,
+				BB0000010000000000000105 /* AppLogger.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000003D /* Parsing */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000004B /* RSSParser.swift */,
+				BB000001000000000000004C /* ThumbnailExtractor.swift */,
+			);
+			path = Parsing;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000003E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000004D /* OGImageActor.swift */,
+				BB000001000000000000004E /* RSSFetcherActor.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000003F /* ArticleCard */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000005E /* ArticleCardView.swift */,
+				BB000001000000000000005F /* HeroCardView.swift */,
+			);
+			path = ArticleCard;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000004A /* FeedManager */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000006A /* FeedManagerViewModel.swift */,
+				BB000001000000000000006B /* FeedManagerView.swift */,
+			);
+			path = FeedManager;
+			sourceTree = "<group>";
+		};
+		DD000001000000000000004B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				BB000001000000000000005A /* GlassCard.swift */,
+				BB000001000000000000005B /* CategoryBadge.swift */,
+				BB000001000000000000005C /* FaviconImage.swift */,
+				BB000001000000000000005D /* TimeAgoText.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EE000001000000000000001A /* Discover */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FF000001000000000000001B /* Build configuration list for PBXNativeTarget "Discover" */;
+			buildPhases = (
+				CC000001000000000000001A /* Sources */,
+				CC000001000000000000001B /* Frameworks */,
+				CC000001000000000000001C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Discover;
+			productName = Discover;
+			productReference = BB000001000000000000003A /* Discover.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EE000001000000000000001B /* DiscoverTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FF000001000000000000001C /* Build configuration list for PBXNativeTarget "DiscoverTests" */;
+			buildPhases = (
+				CC000001000000000000001D /* Sources */,
+				CC000001000000000000001E /* Frameworks */,
+				CC0000010000000000000020 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				GG000001000000000000001B /* PBXTargetDependency */,
+			);
+			name = DiscoverTests;
+			productName = DiscoverTests;
+			productReference = BB000001000000000000003B /* DiscoverTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FF000001000000000000003A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					EE000001000000000000001A = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					EE000001000000000000001B = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = EE000001000000000000001A;
+					};
+				};
+			};
+			buildConfigurationList = FF000001000000000000001A /* Build configuration list for PBXProject "Discover" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DD000001000000000000001A;
+			productRefGroup = DD000001000000000000001B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EE000001000000000000001A /* Discover */,
+				EE000001000000000000001B /* DiscoverTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CC000001000000000000001C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001000000000000002D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC0000010000000000000020 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000010000000000000103 /* atom_sample.xml in Resources */,
+				AA0000010000000000000102 /* rss_sample.xml in Resources */,
+				AA0000010000000000000106 /* namespaces_sample.xml in Resources */,
+				AA0000010000000000000107 /* youtube_sample.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CC000001000000000000001A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001000000000000001A /* DiscoverApp.swift in Sources */,
+				AA000001000000000000001B /* ContentView.swift in Sources */,
+				AA000001000000000000001C /* CategorySidebarView.swift in Sources */,
+				AA000001000000000000001D /* ArticleListView.swift in Sources */,
+				AA000001000000000000001E /* ArticleModel.swift in Sources */,
+				AA000001000000000000001F /* FeedModel.swift in Sources */,
+				AA000001000000000000002A /* CategoryModel.swift in Sources */,
+				AA000001000000000000002B /* DefaultFeeds.swift in Sources */,
+				AA000001000000000000002C /* Color+Hex.swift in Sources */,
+				AA000001000000000000003D /* URLNormaliser.swift in Sources */,
+				AA000001000000000000003E /* HTMLStripper.swift in Sources */,
+				AA000001000000000000003F /* SnippetTruncator.swift in Sources */,
+				AA000001000000000000004A /* IDGenerator.swift in Sources */,
+				AA0000010000000000000104 /* ModelContext+Save.swift in Sources */,
+				AA0000010000000000000105 /* AppLogger.swift in Sources */,
+				AA000001000000000000004B /* RSSParser.swift in Sources */,
+				AA000001000000000000004C /* ThumbnailExtractor.swift in Sources */,
+				AA000001000000000000004D /* OGImageActor.swift in Sources */,
+				AA000001000000000000004E /* RSSFetcherActor.swift in Sources */,
+				AA000001000000000000004F /* ArticleListViewModel.swift in Sources */,
+				AA000001000000000000005A /* GlassCard.swift in Sources */,
+				AA000001000000000000005B /* CategoryBadge.swift in Sources */,
+				AA000001000000000000005C /* FaviconImage.swift in Sources */,
+				AA000001000000000000005D /* TimeAgoText.swift in Sources */,
+				91AA013A2F547FB300C5D32F /* PreferencesView.swift in Sources */,
+				AA000001000000000000005E /* ArticleCardView.swift in Sources */,
+				AA000001000000000000005F /* HeroCardView.swift in Sources */,
+				AA000001000000000000006A /* FeedManagerViewModel.swift in Sources */,
+				AA000001000000000000006B /* FeedManagerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC000001000000000000001D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001000000000000002E /* DiscoverTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		GG000001000000000000001B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE000001000000000000001A /* Discover */;
+			targetProxy = GG000001000000000000001A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		FF000001000000000000002A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FF000001000000000000002B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FF000001000000000000002C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Discover/Resources/Discover.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Discover/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.discover.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		FF000001000000000000002D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Discover/Resources/Discover.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Discover/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.discover.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		FF000001000000000000002E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Discover.app/Contents/MacOS/Discover";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.discover.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUNDLE_LOADER)";
+			};
+			name = Debug;
+		};
+		FF000001000000000000002F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Discover.app/Contents/MacOS/Discover";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.discover.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUNDLE_LOADER)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FF000001000000000000001A /* Build configuration list for PBXProject "Discover" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF000001000000000000002A /* Debug */,
+				FF000001000000000000002B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FF000001000000000000001B /* Build configuration list for PBXNativeTarget "Discover" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF000001000000000000002C /* Debug */,
+				FF000001000000000000002D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FF000001000000000000001C /* Build configuration list for PBXNativeTarget "DiscoverTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF000001000000000000002E /* Debug */,
+				FF000001000000000000002F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FF000001000000000000003A /* Project object */;
+}

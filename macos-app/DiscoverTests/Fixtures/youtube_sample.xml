@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns="http://www.w3.org/2005/Atom">
+  <link rel="alternate" href="https://www.youtube.com/channel/UC6P24bhhCmMPOcujA9PKPTA"/>
+  <title>Film Riot</title>
+  <updated>2026-04-16T10:00:00+00:00</updated>
+  <entry>
+    <id>yt:video:abc12345</id>
+    <yt:videoId>abc12345</yt:videoId>
+    <yt:channelId>UC6P24bhhCmMPOcujA9PKPTA</yt:channelId>
+    <title>Awesome Filmmaking Tutorial</title>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=abc12345"/>
+    <author>
+      <name>Film Riot</name>
+      <uri>https://www.youtube.com/channel/UC6P24bhhCmMPOcujA9PKPTA</uri>
+    </author>
+    <published>2026-04-16T09:00:00+00:00</published>
+    <updated>2026-04-16T09:30:00+00:00</updated>
+    <media:group xmlns:media="http://search.yahoo.com/mrss/">
+      <media:title>Awesome Filmmaking Tutorial</media:title>
+      <media:content url="https://www.youtube.com/v/abc12345?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+      <media:thumbnail url="https://i.ytimg.com/vi/abc12345/hqdefault.jpg" width="480" height="360"/>
+      <media:description>In this video, we show you how to...</media:description>
+    </media:group>
+  </entry>
+</feed>
