@@ -13,6 +13,12 @@ struct DiscoverApp: App {
     /// injected via `.environment` so every view (incl. detached sheets) shares one instance.
     @State private var theme = ReaderThemeManager()
 
+    /// Cluster E2 — the background refresh scheduler. App-lifetime and SHARED across windows (not
+    /// per-window @State): one window owning it meant each new window spun up its own long-lived
+    /// loop that was never cancelled on window close (a per-window leak) and N windows ran N
+    /// concurrent refresh loops. A single shared instance runs exactly one loop for the whole app.
+    @State private var refreshScheduler = RefreshScheduler(viewModel: ArticleListViewModel())
+
     #if os(macOS)
     /// Cluster F3 — hosts AppleScript read-only scriptability (`unread count` / `article count`).
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
@@ -53,6 +59,8 @@ struct DiscoverApp: App {
                 // Inject the shared theme; apply the resolved (dark-only) appearance at the
                 // content root so sheets inherit it (cluster A3).
                 .environment(theme)
+                // One shared refresh scheduler across all windows (see property doc).
+                .environment(refreshScheduler)
                 .preferredColorScheme(theme.resolvedColorScheme)
         }
         .modelContainer(modelContainer)
@@ -93,6 +101,7 @@ struct DiscoverApp: App {
         WindowGroup {
             ContentView()
                 .environment(theme)
+                .environment(refreshScheduler)
                 .preferredColorScheme(theme.resolvedColorScheme)
         }
         .modelContainer(modelContainer)

@@ -15,6 +15,9 @@ actor OGImageActor {
   // MARK: - State
 
   private var cache: [String: String?] = [:]  // nil = "already tried, no image"
+  /// Insertion order of cache keys, for bounded FIFO eviction.
+  private var order: [String] = []
+  private let cacheLimit = 500
 
   private let byteLimit = 50 * 1024  // 50 KB
   private let timeout: TimeInterval = 8
@@ -26,12 +29,19 @@ actor OGImageActor {
     if let cached = cache[articleURL] { return cached }
     let result = await fetch(articleURL)
 
-    // BUG_REPORT: Fixed unbounded memory leak in OGImage cache
-    if cache.count > 500 {
-      cache.removeAll(keepingCapacity: true)
+    // Bounded FIFO eviction. Previously the whole cache was cleared once it passed the limit,
+    // which thrashed (drop ~500 still-useful entries, then refill). Evict only the oldest overflow.
+    if cache.index(forKey: articleURL) == nil {
+      order.append(articleURL)
+    }
+    cache[articleURL] = result
+
+    if order.count > cacheLimit {
+      let evict = order.count - cacheLimit
+      for key in order.prefix(evict) { cache.removeValue(forKey: key) }
+      order.removeFirst(evict)
     }
 
-    cache[articleURL] = result
     return result
   }
 

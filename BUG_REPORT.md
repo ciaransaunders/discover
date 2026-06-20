@@ -1,5 +1,30 @@
 # BUG REPORT — Discover Project
 
+## Phase 2 — bug-finder & eliminator sweep (2026-06-20) ✅
+
+**Method:** clean build with warnings treated as errors (`SWIFT_TREAT_WARNINGS_AS_ERRORS=YES`,
+`GCC_TREAT_WARNINGS_AS_ERRORS=YES`) → **0 warnings**; then a 6-dimension parallel audit
+(concurrency/actor-isolation, force-unwraps/crashes, retain-cycles & resource lifecycle, SwiftData,
+SwiftUI state, dead-code) of the new Phase-1 code, **each finding adversarially verified** by an
+independent agent. **15 issues raised → 4 confirmed real**; 11 were rejected as false alarms by the
+verify pass — notably an overstated "duplicate upserts / data corruption in multi-window" claim that
+was disproven (the upsert path is `@MainActor`, has no suspension point, and is idempotent by djb2
+id, so concurrent loops insert zero duplicate rows). All 4 confirmed issues were fixed:
+
+| # | Severity | Location | Defect | Fix |
+|---|---|---|---|---|
+| S1 | medium | `ContentView` / `RefreshScheduler` | The background-refresh loop was an unstructured `Task` owned **per-window** via `@State`; SwiftUI never cancelled it on window close and the `[weak self]` was promoted to a strong `self`, so closing any secondary window leaked the scheduler + its view-model + the window's `ModelContext`, and the orphaned loop kept firing network fetches into a torn-down context. | Made `RefreshScheduler` a **single app-lifetime instance** owned by `DiscoverApp` and injected via `.environment`; `start(context:)` is restart-safe, so each window re-arms the one shared loop instead of creating its own. |
+| S2 | low | same | N windows ran N concurrent refresh loops (redundant network; data layer already safe). | Same single-shared-instance change → exactly one loop app-wide. |
+| S3 | low | `OGImageActor` | On exceeding 500 entries the cache cleared **entirely** (`removeAll`), thrashing ~500 still-useful entries and forcing redundant ≤50 KB HTML re-scrapes. | Bounded **FIFO eviction** — drop only the oldest overflow, keep the rest. |
+| S4 | low | `RefreshScheduler` | Unused `import OSLog` (dead code). | Removed. |
+
+**Cluster G (Safari extension) de-scoped** by the owner ("Skip G"). The uncommitted G2/G3 App-Group
+inbox scaffolding (`AppGroup`, `PendingFeed`, `PendingFeedInbox`, `SharedFeedImporter` + wiring/tests)
+was removed so no dead, non-functional App-Group code remains in a bug-*elimination* phase.
+
+**Final gate:** clean build with **0 warnings / 0 errors**; full Swift Testing suite green on **two
+consecutive runs** (`TEST SUCCEEDED`, 0 failures both times).
+
 ## Performance / image quality (2026-06-20, from live-app feedback) 🟠
 
 User observed the running app was "very slow" and "some pictures pulled are very low res".

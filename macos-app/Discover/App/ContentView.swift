@@ -23,10 +23,11 @@ struct ContentView: View {
     /// `.environment` so every `ArticleListView` (and its cards) shares one selection.
     @State private var navState = NavigationStateModel()
 
-    /// App-lifetime background refresh scheduler (cluster E2). Owns the single long-lived refresh
-    /// loop, started from the top-level `.task` below — replaces the old view-scoped loop in
-    /// `ArticleListView`.
-    @State private var refreshScheduler = RefreshScheduler(viewModel: ArticleListViewModel())
+    /// App-lifetime background refresh scheduler (cluster E2), shared across all windows and owned by
+    /// `DiscoverApp` (injected via `.environment`). Started from the top-level `.task` below;
+    /// `start(context:)` is restart-safe, so each window re-arms the single shared loop rather than
+    /// creating its own.
+    @Environment(RefreshScheduler.self) private var refreshScheduler
     @State private var setupErrorMessage: String?
 
     /// Cluster F2 — live category/folder slugs, used to resolve a restored window selection that may

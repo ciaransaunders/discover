@@ -1,6 +1,5 @@
 import Foundation
 import SwiftData
-import OSLog
 
 /// App-lifetime background refresh scheduler (cluster E2).
 ///

@@ -1,6 +1,6 @@
 # Discover (macOS) — Phase 0 Feature Plan
 
-**Status:** Draft for owner sign-off — no code to be written until approved.
+**Status:** ✅ Implemented (clusters A–F) — approved & built 2026-06-20. Cluster **G (Safari extension) de-scoped by owner ("Skip G")**. Schema migration chosen: explicit `VersionedSchema` + `SchemaMigrationPlan` (OQ-1). Reader: in-app plain-text, default tap (OQ-11/12). Build clean (0 warnings), full test suite green twice; see `BUG_REPORT.md` Phase 0/Phase 2 sections.
 **Scope:** Add NetNewsWire-style reading/organisation/platform features to the native `macos-app/` SwiftUI app.
 **Date:** 2026-06-20
 
